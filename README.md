@@ -13,7 +13,7 @@ However you don't want to use a real instance of the back-end service for many r
 
 ## Example
 
-Let's say that we hvae a back-end service that exposes an endpoint for fetching product information via HTTP (eg, `GET /products/<id>`). We also have a web application that uses this service.
+Let's say that we have a back-end service that exposes an endpoint for fetching product information via HTTP (eg, `GET /products/<id>`). We also have a web application that uses this service.
 
 ### Successful Scenario
 
