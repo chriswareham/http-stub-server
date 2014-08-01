@@ -21,6 +21,8 @@ import au.com.sensis.stubby.model.StubRequest;
 
 public class RequestPatternTest {
 
+    private static final List<StubParam> EMPTY_PARAMS = Collections.emptyList();
+    
     private StubRequest stubbedRequest; 
     private StubRequest incomingRequest;
     
@@ -159,7 +161,7 @@ public class RequestPatternTest {
     
     @Test
     public void testNoMatchNoParams() {
-        incomingRequest.setParams(Collections.EMPTY_LIST);
+        incomingRequest.setParams(EMPTY_PARAMS);
         
         MatchResult result = instance1.match(incomingRequest);
         
@@ -188,7 +190,7 @@ public class RequestPatternTest {
     
     @Test
     public void testNoMatchNoHeaders() {
-        incomingRequest.setHeaders(Collections.EMPTY_LIST);
+        incomingRequest.setHeaders(EMPTY_PARAMS);
         
         MatchResult result = instance1.match(incomingRequest);
         

@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 
 public class DeepCopyUtils {
     
+    @SuppressWarnings("unchecked")
     public static <T> T deepCopy(T src) {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();

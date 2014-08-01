@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import au.com.sensis.stubby.test.client.GenericClientResponse;
 import au.com.sensis.stubby.test.support.TestBase;
 
 public class MatchResponseTest extends TestBase {

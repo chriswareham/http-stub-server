@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import au.com.sensis.stubby.test.client.MessageBuilder;
 import au.com.sensis.stubby.test.model.JsonExchange;
 import au.com.sensis.stubby.test.model.JsonPair;
 import au.com.sensis.stubby.test.model.JsonRequest;

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import au.com.sensis.stubby.test.client.GenericClientResponse;
 import au.com.sensis.stubby.test.support.TestBase;
 
 public class ScriptTest extends TestBase {

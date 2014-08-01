@@ -8,6 +8,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
+import au.com.sensis.stubby.test.client.GenericClientResponse;
 import au.com.sensis.stubby.test.model.JsonPair;
 import au.com.sensis.stubby.test.model.JsonRequest;
 import au.com.sensis.stubby.test.model.JsonRequestList;

@@ -6,4 +6,5 @@
 /grails/classes
 *.iml
 /.idea
-
+/*/maven-eclipse.xml
+/*/.externalToolBuilders/

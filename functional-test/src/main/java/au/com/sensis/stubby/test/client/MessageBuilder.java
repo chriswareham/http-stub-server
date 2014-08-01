@@ -1,4 +1,4 @@
-package au.com.sensis.stubby.test;
+package au.com.sensis.stubby.test.client;
 
 import au.com.sensis.stubby.test.model.JsonExchange;
 

@@ -16,9 +16,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
-import au.com.sensis.stubby.test.Client;
-import au.com.sensis.stubby.test.GenericClientResponse;
-import au.com.sensis.stubby.test.MessageBuilder;
+import au.com.sensis.stubby.test.client.Client;
+import au.com.sensis.stubby.test.client.GenericClientResponse;
+import au.com.sensis.stubby.test.client.MessageBuilder;
 import au.com.sensis.stubby.test.model.JsonMessage;
 import au.com.sensis.stubby.test.model.JsonPair;
 import au.com.sensis.stubby.test.model.JsonStubbedExchangeList;
@@ -29,20 +29,20 @@ public abstract class TestBase {
 
     protected Client client;
 
-    protected String getStandaloneServer() {
-        if (!TestServer.isRunning()) { // keep running for all tests
-            TestServer.start();
-        }
-        return String.format("http://localhost:%d", TestServer.getPort());
-    }
-
+//    protected String getStandaloneServer() {
+//        if (!TestServer.isRunning()) { // keep running for all tests
+//            TestServer.start();
+//        }
+//        return String.format("http://localhost:%d", TestServer.getPort());
+//    }
+//
     @Before
     public void before() {
         String testServer = System.getProperty(P_TEST_SERVER);
 
-        if (testServer == null) { // property not given, start internal server
-            testServer = getStandaloneServer();
-        }
+//        if (testServer == null) { // property not given, start internal server
+//            testServer = getStandaloneServer();
+//        }
 
         client = new Client(testServer);
         client.reset();

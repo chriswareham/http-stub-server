@@ -1,4 +1,4 @@
-package au.com.sensis.stubby.test;
+package au.com.sensis.stubby.test.client;
 
 import org.apache.http.entity.ContentType;
 

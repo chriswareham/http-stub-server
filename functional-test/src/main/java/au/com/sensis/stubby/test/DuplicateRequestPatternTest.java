@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import au.com.sensis.stubby.test.client.MessageBuilder;
 import au.com.sensis.stubby.test.model.JsonStubbedExchangeList;
 import au.com.sensis.stubby.test.support.TestBase;
 
