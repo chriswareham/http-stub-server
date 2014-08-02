@@ -18,6 +18,13 @@
             <artifactId>http-stub-server-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>au.com.sensis</groupId>
+            <artifactId>http-stub-server-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
@@ -31,9 +38,28 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <targetPath>au/com/sensis/stubby/servlet</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources-filtered</directory>
+                <includes>
+                    <include>version.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
@@ -43,18 +69,29 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
                     <port>9090</port>
                     <path>/</path>
-                    <systemProperties>
-                        <appserver.base>${project.build.directory}/appserver-base</appserver.base>
-                        <appserver.home>${project.build.directory}/appserver-home</appserver.home>
-                        <derby.system.home>${project.build.directory}/appserver-base/logs</derby.system.home>
-                        <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-                    </systemProperties>                  
                 </configuration>
                 <executions>
                     <execution>
@@ -62,7 +99,7 @@
                         <goals>
                             <goal>run-war-only</goal>
                         </goals>
-                        <phase>pre-test</phase>
+                        <phase>pre-integration-test</phase>
                         <configuration>
                             <fork>true</fork>
                         </configuration>
@@ -72,7 +109,7 @@
                         <goals>
                             <goal>shutdown</goal>
                         </goals>
-                        <phase>post-test</phase>
+                        <phase>post-integration-test</phase>
                     </execution>
                 </executions>
             </plugin>

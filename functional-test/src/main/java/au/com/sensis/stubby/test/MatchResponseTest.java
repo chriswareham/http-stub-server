@@ -28,5 +28,17 @@ public class MatchResponseTest extends TestBase {
         assertEquals(Arrays.asList("bar1", "bar2", "bar3; bar4"), response.getHeaders("X-Foo"));
         assertEquals("response body", response.getText());
     }
+    
+    @Test
+    public void testMinimalResponse() {
+        builder()
+            .setRequestPath("/test")
+            .setResponseStatus(202)
+            .stub(); 
+        
+        GenericClientResponse response = client.executeGet("/test");
+        
+        assertEquals(202, response.getStatus());
+    }
 
 }

@@ -71,8 +71,10 @@ public class Transformer {
     }
 
     public static void populateServletResponse(StubResponse message, HttpServletResponse response) throws IOException {
-        for (StubParam header : message.getHeaders()) {
-            response.setHeader(header.getName(), header.getValue());
+        if (message.getHeaders() != null) {
+            for (StubParam header : message.getHeaders()) {
+                response.addHeader(header.getName(), header.getValue());
+            }
         }
         response.setStatus(message.getStatus());
         if (message.getBody() instanceof String) {

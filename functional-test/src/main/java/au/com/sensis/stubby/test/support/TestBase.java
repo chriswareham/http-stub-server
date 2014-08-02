@@ -29,20 +29,9 @@ public abstract class TestBase {
 
     protected Client client;
 
-//    protected String getStandaloneServer() {
-//        if (!TestServer.isRunning()) { // keep running for all tests
-//            TestServer.start();
-//        }
-//        return String.format("http://localhost:%d", TestServer.getPort());
-//    }
-//
     @Before
     public void before() {
         String testServer = System.getProperty(P_TEST_SERVER);
-
-//        if (testServer == null) { // property not given, start internal server
-//            testServer = getStandaloneServer();
-//        }
 
         client = new Client(testServer);
         client.reset();
