@@ -17,5 +17,4 @@ Github TODO:
  - Document filtering support (/_control/requests?method=GET&path=...)
 
 Chris Wareham TODO:
- - Use a read/write lock and remove synchronized keywords in the StubService class
  - Add support for reloading request/responses from the filesystem

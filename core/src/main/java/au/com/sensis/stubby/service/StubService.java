@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.log4j.Logger;
 
@@ -28,11 +30,13 @@ public class StubService {
 
     private LinkedList<StubServiceExchange> responses = new LinkedList<StubServiceExchange>();
     private LinkedList<StubRequest> requests = new LinkedList<StubRequest>();
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public synchronized void loadResponses(String filename) {
+    public void loadResponses(String filename) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Loading responses from " + filename);
         }
+        lock.writeLock().lock();
         BufferedReader reader = null;
         try {
             File file = new File(filename);
@@ -44,31 +48,43 @@ public class StubService {
                     }
                     String str = FileUtils.read(new File(file.getParentFile(), fn));
                     StubExchange exchange = JsonUtils.deserialize(str, StubExchange.class);
-                    addResponse(exchange);
+                    addResponseInternal(exchange);
                 }
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load responses from " + filename, e);
         } finally {
             FileUtils.close(reader);
+            lock.writeLock().unlock();
         }
     }
 
-    public synchronized void addResponse(StubExchange exchange) {
+    public void addResponse(StubExchange exchange) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Adding response: " + JsonUtils.prettyPrint(exchange));
         }
-        StubServiceExchange internal = new StubServiceExchange(exchange);
-        responses.remove(internal); // remove existing stubbed request (ie, will never match anymore)
-        responses.addFirst(internal); // ensure most recent match first
+        lock.writeLock().lock();
+        try {
+            addResponseInternal(exchange);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
-    public synchronized StubServiceResult findMatch(StubRequest request) {
+    public StubServiceResult findMatch(StubRequest request) {
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Got request: " + JsonUtils.prettyPrint(request));
+        }
+
+        lock.writeLock().lock();
         try {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Got request: " + JsonUtils.prettyPrint(request));
-            }
             requests.addFirst(request);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        try {
+            lock.readLock().lock();
             List<MatchResult> attempts = new ArrayList<MatchResult>();
             for (StubServiceExchange response : responses) {
                 MatchResult matchResult = response.matches(request);
@@ -82,58 +98,90 @@ public class StubService {
                         ScriptWorld world = new ScriptWorld(request, response.getResponseBody(), exchange); // creates deep copies of objects
                         new Script(response.getScript().getScript()).execute(world);
                         return new StubServiceResult(attempts, world.getResponse(), world.getDelay());
-                    } else {
-                        return new StubServiceResult(attempts, exchange.getResponse(), exchange.getDelay());
                     }
+                    return new StubServiceResult(attempts, exchange.getResponse(), exchange.getDelay());
                 }
             }
+
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Didn't match: " + request.getPath());
             }
+/* XXX should this only fire on matches?
             notifyAll(); // inform any waiting threads that a new request has come in
+*/
             return new StubServiceResult(attempts); // no match (empty list)
         } catch (Exception e) {
             throw new RuntimeException("Error matching request", e);
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
-    public synchronized StubServiceExchange getResponse(int index) throws NotFoundException {
+    public StubServiceExchange getResponse(int index) throws NotFoundException {
+        lock.readLock().lock();
         try {
             return responses.get(index);
         } catch (IndexOutOfBoundsException e) {
             throw new NotFoundException("Response does not exist: " + index);
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
-    public synchronized List<StubServiceExchange> getResponses() {
-        return responses;
+    public List<StubServiceExchange> getResponses() {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<StubServiceExchange>(responses);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
-    public synchronized void deleteResponse(int index) throws NotFoundException {
+    public void deleteResponse(int index) throws NotFoundException {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Deleting response: " + index);
         }
+        lock.writeLock().lock();
         try {
             responses.remove(index);
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException("Response does not exist: " + index);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
-    public synchronized void deleteResponses() {
+    public void deleteResponses() {
         LOGGER.trace("Deleting all responses");
-        responses.clear();
+        lock.writeLock().lock();
+        try {
+            responses.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
-    public synchronized StubRequest getRequest(int index) throws NotFoundException {
+    public StubRequest getRequest(int index) throws NotFoundException {
+        lock.readLock().lock();
         try {
             return requests.get(index);
         } catch (IndexOutOfBoundsException e) {
             throw new NotFoundException("Response does not exist: " + index);
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
-    public synchronized List<StubRequest> findRequests(StubRequest filter, long timeout) { // blocking call
+    public List<StubRequest> getRequests() {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<StubRequest>(requests);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    public List<StubRequest> findRequests(StubRequest filter, long timeout) { // blocking call
         long remaining = timeout;
         while (remaining > 0) {
             List<StubRequest> result = findRequests(filter);
@@ -152,34 +200,49 @@ public class StubService {
         return Collections.emptyList();
     }
 
-    public synchronized List<StubRequest> findRequests(StubRequest filter) {
-        RequestPattern pattern = new RequestPattern(filter);
-        List<StubRequest> result = new ArrayList<StubRequest>();
-        for (StubRequest request : requests) {
-            if (pattern.match(request).matches()) {
-                result.add(request);
+    public List<StubRequest> findRequests(StubRequest filter) {
+        lock.readLock().lock();
+        try {
+            RequestPattern pattern = new RequestPattern(filter);
+            List<StubRequest> result = new ArrayList<StubRequest>();
+            for (StubRequest request : requests) {
+                if (pattern.match(request).matches()) {
+                    result.add(request);
+                }
             }
+            return result;
+        } finally {
+            lock.readLock().unlock();
         }
-        return result;
     }
 
-    public synchronized List<StubRequest> getRequests() {
-        return requests;
-    }
-
-    public synchronized void deleteRequest(int index) throws NotFoundException {
+    public void deleteRequest(int index) throws NotFoundException {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Deleting request: " + index);
         }
+        lock.writeLock().lock();
         try {
             requests.remove(index);
         } catch (IndexOutOfBoundsException e) {
             throw new NotFoundException("Request does not exist: " + index);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
-    public synchronized void deleteRequests() {
+    public void deleteRequests() {
         LOGGER.trace("Deleting all requests");
-        requests.clear();
+        lock.writeLock().lock();
+        try {
+            requests.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    private void addResponseInternal(StubExchange exchange) {
+        StubServiceExchange internal = new StubServiceExchange(exchange);
+        responses.remove(internal); // remove existing stubbed request (ie, will never match anymore)
+        responses.addFirst(internal); // ensure most recent match first
     }
 }

@@ -6,7 +6,7 @@
 <!--
     <context-param>
         <param-name>responses</param-name>
-        <param-value>/home/[username]/responses/responses.lst</param-value>
+        <param-value>${responses.dir}/responses/responses.lst</param-value>
     </context-param>
 -->
     <listener>

@@ -7,9 +7,9 @@ public class ResponseBody {
     private Object body;
 
     public ResponseBody(StubResponse response) {
-        if (response.getFile() != null) {
+        if (response != null && response.getFile() != null) {
             this.body = FileUtils.read(response.getFile());
-        } else {
+        } else if (response != null) {
             this.body = response.getBody();
         }
     }
