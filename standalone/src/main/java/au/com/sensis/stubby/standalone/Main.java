@@ -1,5 +1,6 @@
 package au.com.sensis.stubby.standalone;
 
+import au.com.sensis.stubby.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -15,26 +16,47 @@ public class Main {
     private static final int NUM_WORKER_THREADS = 10;
 
     public static void main(String[] args) throws Exception {
+        int port = 0;
+        int sslPort = 0;
+        String responses = null;
+
+        try {
+            for (int i = 0; i < args.length; i += 2) {
+                if ("--port".equals(args[i]) && i + 1 < args.length) {
+                    port = Integer.parseInt(args[i + 1]);
+                } else if ("--ssl-port".equals(args[i]) && i + 1 < args.length) {
+                    sslPort = Integer.parseInt(args[i + 1]);
+                } else if ("--responses".equals(args[i]) && i + 1 < args.length) {
+                    responses = args[i + 1];
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("Usage : java ... --port <http_port> [--ssl-port <https_port>] [--responses <filename>]");
+            System.exit(1);
+        }
+
         final List<ServerInstance> servers = new ArrayList<ServerInstance>();
         final ServerHandler handler = new ServerHandler(); // share between protocols
         final ExecutorService executor = Executors.newFixedThreadPool(NUM_WORKER_THREADS);
 
-        if (args.length >= 1) { // HTTP server
-            HttpServerInstance httpServer = new HttpServerInstance(Integer.parseInt(args[0]), handler, executor);
+        if (!StringUtils.isBlank(responses)) {
+            handler.loadResponses(responses);
+        }
+
+        if (port > 0) { // HTTP server
+            HttpServerInstance httpServer = new HttpServerInstance(port, handler, executor);
             LOGGER.info("Started HTTP server on " + httpServer.getAddress());
             servers.add(httpServer);
         }
 
-        if (args.length >= 2) { // HTTPS server
-            HttpsServerInstance httpsServer = new HttpsServerInstance(Integer.parseInt(args[1]), handler, executor);
+        if (sslPort > 0) { // HTTPS server
+            HttpsServerInstance httpsServer = new HttpsServerInstance(sslPort, handler, executor);
             LOGGER.info("Started HTTPS server on " + httpsServer.getAddress());
             servers.add(httpsServer);
         }
 
-        if (args.length > 3) {
-            throw new RuntimeException("Usage: java ... <http_port> [<https_port>]");
-        }
-        
         Thread shutdownHook = new Thread() {
             public void run() {
                 LOGGER.info("Stopping servers...");
@@ -49,7 +71,7 @@ public class Main {
                 }
             }
         };
-        
+
         handler.setShutdownHook(shutdownHook); // handle shutdown requests over HTTP
         Runtime.getRuntime().addShutdownHook(shutdownHook); // handle SIGINT etc.
     }

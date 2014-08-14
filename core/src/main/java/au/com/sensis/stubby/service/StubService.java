@@ -1,5 +1,8 @@
 package au.com.sensis.stubby.service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -15,7 +18,9 @@ import au.com.sensis.stubby.service.model.MatchResult;
 import au.com.sensis.stubby.service.model.RequestPattern;
 import au.com.sensis.stubby.service.model.StubServiceExchange;
 import au.com.sensis.stubby.service.model.StubServiceResult;
+import au.com.sensis.stubby.utils.FileUtils;
 import au.com.sensis.stubby.utils.JsonUtils;
+import au.com.sensis.stubby.utils.StringUtils;
 
 public class StubService {
 
@@ -25,13 +30,28 @@ public class StubService {
     private LinkedList<StubRequest> requests = new LinkedList<StubRequest>();
 
     public synchronized void loadResponses(String filename) {
-        // open file
-        // while (line read from file) {
-        //     read file named on the line
-        //     transform from JSON to Java
-        //     call addResponse
-        // }
-        // close file
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Loading responses from " + filename);
+        }
+        BufferedReader reader = null;
+        try {
+            File file = new File(filename);
+            reader = new BufferedReader(new FileReader(file));
+            for (String fn = reader.readLine(); fn != null; fn = reader.readLine()) {
+                if (!StringUtils.isBlank(fn)) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Loading response from " + fn);
+                    }
+                    String str = FileUtils.read(new File(file.getParentFile(), fn));
+                    StubExchange exchange = JsonUtils.deserialize(str, StubExchange.class);
+                    addResponse(exchange);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load responses from " + filename, e);
+        } finally {
+            FileUtils.close(reader);
+        }
     }
 
     public synchronized void addResponse(StubExchange exchange) {

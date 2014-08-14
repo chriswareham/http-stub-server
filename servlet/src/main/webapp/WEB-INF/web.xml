@@ -3,12 +3,12 @@
 
     <display-name>Generic HTTP Stub</display-name>
     <description>Generic HTTP stub server for acceptance testing</description>
-
+<!--
     <context-param>
         <param-name>responses</param-name>
-        <param-value>/home/chris/responses/responses.lst</param-value>
+        <param-value>/home/[username]/responses/responses.lst</param-value>
     </context-param>
-
+-->
     <listener>
         <listener-class>au.com.sensis.stubby.servlet.StubContextListener</listener-class>
     </listener>

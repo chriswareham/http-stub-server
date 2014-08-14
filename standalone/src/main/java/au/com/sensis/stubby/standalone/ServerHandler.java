@@ -31,8 +31,12 @@ public class ServerHandler implements HttpHandler {
     private Thread shutdownHook; // if set, use for graceful shutdown
 
     public ServerHandler() {
-        this.service = new StubService();
-        this.jsonService = new JsonServiceInterface(service);
+        service = new StubService();
+        jsonService = new JsonServiceInterface(service);
+    }
+
+    public void loadResponses(String filename) {
+        service.loadResponses(filename);
     }
 
     public void setShutdownHook(Thread shutdownHook) {
@@ -152,7 +156,7 @@ public class ServerHandler implements HttpHandler {
             throw new RuntimeException("Unsupported method: " + method);
         }
     }
-    
+
     private void handleResponse(HttpExchange exchange, int index) throws IOException {
         String method = exchange.getRequestMethod();
         if (method.equals("GET")) {
@@ -221,7 +225,7 @@ public class ServerHandler implements HttpHandler {
             returnError(exchange, "Graceful shutdown not supported");
         }
     }
-    
+
     private void handleVersion(HttpExchange exchange) throws IOException {
         InputStream stream = getClass().getResourceAsStream("/au/com/sensis/stubby/standalone/version.properties");
         try {

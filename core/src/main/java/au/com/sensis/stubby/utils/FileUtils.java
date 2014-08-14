@@ -1,5 +1,6 @@
 package au.com.sensis.stubby.utils;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,9 +17,19 @@ public class FileUtils {
      * @throws RuntimeException if the file cannot be read
      */
     public static String read(String path) throws RuntimeException {
+        return read(new File(path));
+    }
+
+    /**
+     * Read the contents of a file to a string.
+     *
+     * @param file the file to read the contents of
+     * @return the contents of the file
+     * @throws RuntimeException if the file cannot be read
+     */
+    public static String read(File file) throws RuntimeException {
         FileInputStream in = null;
         try {
-            File file = new File(path);
             if (file.length() > Integer.MAX_VALUE) {
                 throw new IOException("File too large");
             }
@@ -33,14 +44,23 @@ public class FileUtils {
             }
             return new String(b , "UTF-8");
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read file " + path, e);
+            throw new RuntimeException("Failed to read " + file.getName(), e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // ignored
-                }
+            close(in);
+        }
+    }
+
+    /**
+     * Close a source or destination of data, quietly ignoring any exception.
+     *
+     * @param closeable the source or destination of data to close
+     */
+    public static void close(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                // ignored
             }
         }
     }
