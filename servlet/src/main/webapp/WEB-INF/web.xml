@@ -4,6 +4,11 @@
     <display-name>Generic HTTP Stub</display-name>
     <description>Generic HTTP stub server for acceptance testing</description>
 
+    <context-param>
+        <param-name>responses</param-name>
+        <param-value>/home/chris/responses/responses.lst</param-value>
+    </context-param>
+
     <listener>
         <listener-class>au.com.sensis.stubby.servlet.StubContextListener</listener-class>
     </listener>
@@ -37,7 +42,7 @@
         <servlet-name>VersionServlet</servlet-name>
         <servlet-class>au.com.sensis.stubby.servlet.VersionServlet</servlet-class>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>RequestServlet</servlet-name>
         <url-pattern>/_control/requests/*</url-pattern>
@@ -57,12 +62,12 @@
         <servlet-name>ResponsesServlet</servlet-name>
         <url-pattern>/_control/responses</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>VersionServlet</servlet-name>
         <url-pattern>/_control/version</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>MatcherServlet</servlet-name>
         <url-pattern>/*</url-pattern>

@@ -11,6 +11,8 @@ public class HttpMessageUtils {
 
     //private static final Logger LOGGER = Logger.getLogger(MessageUtils.class);
 
+    private static final Pattern PATTERN = Pattern.compile("\\-.|^.");
+
     private static final String H_CONTENT_TYPE = "Content-Type";
 
     private static final Pattern TEXT_CONTENT_TYPE = Pattern.compile("text/.+");
@@ -54,8 +56,7 @@ public class HttpMessageUtils {
     }
 
     public static String upperCaseHeader(String name) {
-        Pattern pattern = Pattern.compile("\\-.|^.");
-        Matcher matcher = pattern.matcher(name);
+        Matcher matcher = PATTERN.matcher(name);
         StringBuffer result = new StringBuffer();
         while (matcher.find()) {
             matcher.appendReplacement(result, matcher.group().toUpperCase());
@@ -75,7 +76,7 @@ public class HttpMessageUtils {
         return contentType != null
                 && JSON_CONTENT_TYPE.matcher(contentType).matches();
     }
-    
+
     public static String bodyAsText(StubMessage message) {
         Object body = message.getBody();
         if (body instanceof String) {
@@ -84,7 +85,7 @@ public class HttpMessageUtils {
             throw new RuntimeException("Unexpected body type: " + body.getClass());
         }
     }
-    
+
     public static Object bodyAsJson(StubMessage message) {
         Object body = message.getBody();
         if (body instanceof String) {

@@ -12,11 +12,13 @@ public abstract class StubMessage {
 
     private List<StubParam> headers;
     private Object body;
+    private String file;
 
     protected StubMessage() { }
-    
+
     protected StubMessage(StubMessage other) { // copy constructor
         this.body = (other.body != null) ? DeepCopyUtils.deepCopy(other.body) : null;
+        this.file = other.file;
         if (other.headers != null) {
             this.headers = new ArrayList<StubParam>();
             for (StubParam param : other.headers) {
@@ -24,7 +26,7 @@ public abstract class StubMessage {
             }
         }
     }
-    
+
     public List<StubParam> getHeaders() {
         return headers;
     }
@@ -40,7 +42,15 @@ public abstract class StubMessage {
     public void setBody(Object body) {
         this.body = body;
     }
-    
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
     @JsonIgnore
     public String getHeader(String name) { // get first, case insensitive lookup
         if (headers != null) {
@@ -52,7 +62,7 @@ public abstract class StubMessage {
         }
         return null; // not found
     }
-    
+
     @JsonIgnore
     public void removeHeader(String name) { // case insensitive lookup
         if (headers != null) {
@@ -64,16 +74,16 @@ public abstract class StubMessage {
             }
         }
     }
-    
+
     @JsonIgnore
     public void setHeader(String name, String value) { // replace value, case insensitive lookup
         removeHeader(name);
         if (headers == null) {
             headers = new ArrayList<StubParam>();
         }
-        headers.add(new StubParam(name, value));        
+        headers.add(new StubParam(name, value));
     }
-    
+
     @JsonIgnore
     public List<String> getHeaders(String name) { // get all, case insensitive lookup
         List<String> result = new ArrayList<String>();
@@ -86,5 +96,5 @@ public abstract class StubMessage {
         }
         return result; // empty list if not found
     }
-    
+
 }

@@ -24,37 +24,53 @@ public class StubService {
     private LinkedList<StubServiceExchange> responses = new LinkedList<StubServiceExchange>();
     private LinkedList<StubRequest> requests = new LinkedList<StubRequest>();
 
+    public synchronized void loadResponses(String filename) {
+        // open file
+        // while (line read from file) {
+        //     read file named on the line
+        //     transform from JSON to Java
+        //     call addResponse
+        // }
+        // close file
+    }
+
     public synchronized void addResponse(StubExchange exchange) {
-        LOGGER.debug("Adding response: " + JsonUtils.prettyPrint(exchange));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding response: " + JsonUtils.prettyPrint(exchange));
+        }
         StubServiceExchange internal = new StubServiceExchange(exchange);
-        responses.remove(internal); // remove existing stubed request (ie, will never match anymore)
-        responses.addFirst(internal); // ensure most recent match first   
+        responses.remove(internal); // remove existing stubbed request (ie, will never match anymore)
+        responses.addFirst(internal); // ensure most recent match first
     }
 
     public synchronized StubServiceResult findMatch(StubRequest request) {
         try {
-            LOGGER.trace("Got request: " + JsonUtils.prettyPrint(request));
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Got request: " + JsonUtils.prettyPrint(request));
+            }
             requests.addFirst(request);
             List<MatchResult> attempts = new ArrayList<MatchResult>();
             for (StubServiceExchange response : responses) {
                 MatchResult matchResult = response.matches(request);
                 attempts.add(matchResult);
                 if (matchResult.matches()) {
-                    LOGGER.info("Matched: " + request.getPath() + "");
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("Matched: " + request.getPath() + "");
+                    }
                     StubExchange exchange = response.getExchange();
-                    if (exchange.getScript() != null) {
-                        ScriptWorld world = new ScriptWorld(request, exchange); // creates deep copies of objects
-                        new Script(exchange.getScript()).execute(world);
-                        return new StubServiceResult(
-                                attempts, world.getResponse(), world.getDelay());
+                    if (response.isScript()) {
+                        ScriptWorld world = new ScriptWorld(request, response.getResponseBody(), exchange); // creates deep copies of objects
+                        new Script(response.getScript().getScript()).execute(world);
+                        return new StubServiceResult(attempts, world.getResponse(), world.getDelay());
                     } else {
-                        return new StubServiceResult(
-                                attempts, exchange.getResponse(), exchange.getDelay());
+                        return new StubServiceResult(attempts, exchange.getResponse(), exchange.getDelay());
                     }
                 }
             }
-            LOGGER.info("Didn't match: " + request.getPath());
-            this.notifyAll(); // inform any waiting threads that a new request has come in
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Didn't match: " + request.getPath());
+            }
+            notifyAll(); // inform any waiting threads that a new request has come in
             return new StubServiceResult(attempts); // no match (empty list)
         } catch (Exception e) {
             throw new RuntimeException("Error matching request", e);
@@ -74,7 +90,9 @@ public class StubService {
     }
 
     public synchronized void deleteResponse(int index) throws NotFoundException {
-        LOGGER.trace("Deleting response: " + index);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Deleting response: " + index);
+        }
         try {
             responses.remove(index);
         } catch (IndexOutOfBoundsException e) {
@@ -102,7 +120,7 @@ public class StubService {
             if (result.isEmpty()) {
                 try {
                     long start = System.currentTimeMillis();
-                    this.wait(remaining); // wait for a request to come in, or time to expire
+                    wait(remaining); // wait for a request to come in, or time to expire
                     remaining -= System.currentTimeMillis() - start;
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Interrupted while waiting for request");
@@ -130,7 +148,9 @@ public class StubService {
     }
 
     public synchronized void deleteRequest(int index) throws NotFoundException {
-        LOGGER.trace("Deleting request: " + index);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Deleting request: " + index);
+        }
         try {
             requests.remove(index);
         } catch (IndexOutOfBoundsException e) {
@@ -142,5 +162,4 @@ public class StubService {
         LOGGER.trace("Deleting all requests");
         requests.clear();
     }
-
 }

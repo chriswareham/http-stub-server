@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import au.com.sensis.stubby.model.StubExchange;
 import au.com.sensis.stubby.model.StubRequest;
+import au.com.sensis.stubby.model.StubResponse;
 
 public class StubServiceExchange { // wrap exchange model with some extra runtime info
 
@@ -15,14 +16,18 @@ public class StubServiceExchange { // wrap exchange model with some extra runtim
 
     private StubExchange exchange;
     private RequestPattern requestPattern;
+    private ResponseBody responseBody;
+    private Script script;
     private List<MatchResult> attempts;
-    
+
     public StubServiceExchange(StubExchange exchange) {
         this.exchange = exchange;
         this.requestPattern = new RequestPattern(exchange.getRequest());
+        this.responseBody = new ResponseBody(exchange.getResponse());
+        this.script = new Script(exchange);
         this.attempts = new ArrayList<MatchResult>();
     }
-    
+
     public MatchResult matches(StubRequest message) throws URISyntaxException {
         MatchResult result = requestPattern.match(message);
         for (MatchField field : result.getFields()) {
@@ -39,10 +44,26 @@ public class StubServiceExchange { // wrap exchange model with some extra runtim
         return exchange;
     }
 
+    public StubResponse getResponse() {
+        return exchange.getResponse();
+    }
+
+    public ResponseBody getResponseBody() {
+        return responseBody;
+    }
+
+    public boolean isScript() {
+        return script.getScript() != null;
+    }
+
+    public Script getScript() {
+        return script;
+    }
+
     public List<MatchResult> getAttempts() {
         return attempts;
     }
-    
+
     @Override
     public String toString() {
         return requestPattern.toString();

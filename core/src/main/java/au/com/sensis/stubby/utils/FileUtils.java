@@ -13,9 +13,9 @@ public class FileUtils {
      *
      * @param path the path of the file to read the contents of
      * @return the contents of the file
-     * @throws IllegalArgumentException if the file cannot be read
+     * @throws RuntimeException if the file cannot be read
      */
-    public static String read(String path) throws IllegalArgumentException {
+    public static String read(String path) throws RuntimeException {
         FileInputStream in = null;
         try {
             File file = new File(path);
@@ -33,7 +33,7 @@ public class FileUtils {
             }
             return new String(b , "UTF-8");
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to read file " + path, e);
+            throw new RuntimeException("Failed to read file " + path, e);
         } finally {
             if (in != null) {
                 try {

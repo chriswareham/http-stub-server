@@ -16,3 +16,8 @@ Github TODO:
  - Document JavaScript support
  - Document filtering support (/_control/requests?method=GET&path=...)
 
+Chris Wareham TODO:
+ - Use a read/write lock and remove synchronized keywords in the StubService class
+ - Add support for loading requests/responses from the filesystem (possibly removing need for "bulk-loading tool" feature described above)
+ - Add support for reloading request/responses from the filesystem
+ 

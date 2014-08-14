@@ -226,6 +226,7 @@ This object is used by the `/_control/responses` endpoints and represents a stub
         "request": <HTTP Request>,
         "response": <HTTP Response>,
         "delay": <integer>,
+        "scriptType": <string>
         "script": <string>
     }
 
@@ -247,9 +248,37 @@ Field details:
 
   Integer representing a number of milliseconds to delay the response by. If not provided (or `null`) no delay will be used.
 
+* `scriptType`
+
+  The type of script code to execute when this request is matched. Supports `JavaScript` (the default) and `groovy`.
+
 * `script`
 
-  JavaScript code to execute when this request is matched. Can be used to dynamically modify the output based on input parameters, for example (more details to come).
+  Script code to execute when this request is matched. Can be used to dynamically modify the output based on input parameters, for example.
+
+### Script Support
+
+The following is an example of a request/response with a Groovy script that dynamically modifies the output:
+
+    {
+        "request": {
+            "method": "GET",
+            "path": "/products/\\d+"
+        },
+        "response": {
+            "status": 200,
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/xml"
+                }
+            ],
+            "body": "<product id='id'><desc>This is a product description</desc></product>"
+        },
+        "scriptType": "groovy",
+        "script": "def root = new XmlSlurper().parseText(exchange.response.body); root.@id = request.path.substring(10); exchange.response.body = groovy.xml.XmlUtil.serialize(root)"
+    }
+
 
 ### Body Patterns
 

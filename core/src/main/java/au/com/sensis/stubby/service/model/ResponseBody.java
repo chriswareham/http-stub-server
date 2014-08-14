@@ -10,7 +10,7 @@ public class ResponseBody {
         if (response.getFile() != null) {
             this.body = FileUtils.read(response.getFile());
         } else {
-            body = response.getBody();
+            this.body = response.getBody();
         }
     }
 

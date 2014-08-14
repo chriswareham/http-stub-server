@@ -14,28 +14,31 @@ public class ScriptWorldTest {
 
     private StubRequest request;
     private StubExchange response;
-    
+
     @Before
     public void before() {
         request = new StubRequest();
         request.setPath("/request/path");
-        
+
         response = new StubExchange();
+        response.setScriptType("JavaScript");
         response.setResponse(new StubResponse());
         response.setRequest(new StubRequest());
         response.setDelay(123L);
     }
-    
+
     @Test
     public void testCopiesFields() {
-        ScriptWorld world = new ScriptWorld(request, response);
-        
+        ScriptWorld world = new ScriptWorld(request, null, response);
+
         assertTrue(world.getRequest() != response.getRequest()); // should be different instances
         assertTrue(world.getResponse() != response.getResponse());
-        
+
         assertEquals("/request/path", world.getRequest().getPath()); // ensure we use the acutal request, not request pattern
+
+        assertEquals("JavaScript", world.getScriptType());
 
         assertTrue(world.getDelay().equals(response.getDelay())); // immutable anyway...
     }
-    
+
 }

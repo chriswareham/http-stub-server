@@ -13,6 +13,7 @@ import au.com.sensis.stubby.model.StubParam;
 import au.com.sensis.stubby.model.StubRequest;
 import au.com.sensis.stubby.service.model.MatchField.FieldType;
 import au.com.sensis.stubby.utils.EqualsUtils;
+import au.com.sensis.stubby.utils.FileUtils;
 
 public class RequestPattern {
 
@@ -29,13 +30,17 @@ public class RequestPattern {
         this.path = toPattern(request.getPath());
         this.params = toPattern(request.getParams());
         this.headers = toPattern(request.getHeaders());
-        this.body = toBodyPattern(request.getBody());
+        if (request.getFile() != null) {
+            this.body = toBodyPattern(FileUtils.read(request.getFile()));
+        } else {
+            this.body = toBodyPattern(request.getBody());
+        }
     }
-    
+
     private Pattern toPattern(String value) {
         return (value != null) ? Pattern.compile(value) : DEFAULT_PATTERN;
     }
-    
+
     private Set<ParamPattern> toPattern(List<StubParam> params) {
         Set<ParamPattern> pattern = new HashSet<ParamPattern>();
         if (params != null) {
@@ -45,7 +50,7 @@ public class RequestPattern {
         }
         return pattern;
     }
-    
+
     private BodyPattern toBodyPattern(Object object) {
         if (object != null) {
             if (object instanceof String) {
@@ -150,7 +155,7 @@ public class RequestPattern {
                 && ((RequestPattern) obj).headers.equals(headers)
                 && EqualsUtils.safeEquals(((RequestPattern) obj).body, body);
     }
-    
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
