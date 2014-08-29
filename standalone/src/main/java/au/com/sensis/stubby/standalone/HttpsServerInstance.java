@@ -12,8 +12,21 @@ import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 
 public class HttpsServerInstance extends ServerInstance {
-    
+
     private static final Logger LOGGER = Logger.getLogger(HttpsServerInstance.class);
+
+    private static final void checkConfig() {
+        String[] properties = { // also see 'javax.net.debug' for debugging
+            "javax.net.ssl.keyStore",
+            "javax.net.ssl.keyStorePassword"
+        };
+
+        for (String property : properties) {
+            if (System.getProperty(property) == null) {
+                LOGGER.warn("Should set property '" + property + "' when using HTTPS connector");
+            }
+        }
+    }
 
     private HttpsServer server;
 
@@ -25,21 +38,9 @@ public class HttpsServerInstance extends ServerInstance {
         this.server.setExecutor(executor);
         this.server.start();
     }
-        
+
+    @Override
     public HttpsServer getServer() {
         return server;
     }
-    
-    private static final void checkConfig() {
-        String[] properties = { // also see 'javax.net.debug' for debugging
-                "javax.net.ssl.keyStore", 
-                "javax.net.ssl.keyStorePassword" };
-        
-        for (String property : properties) {
-            if (System.getProperty(property) == null) {
-                LOGGER.warn("Should set property '" + property + "' when using HTTPS connector");
-            }
-        }
-    }
-    
 }

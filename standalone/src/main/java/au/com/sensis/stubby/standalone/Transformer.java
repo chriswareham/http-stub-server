@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.net.httpserver.HttpExchange;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -13,8 +15,6 @@ import au.com.sensis.stubby.model.StubParam;
 import au.com.sensis.stubby.model.StubRequest;
 import au.com.sensis.stubby.model.StubResponse;
 import au.com.sensis.stubby.utils.JsonUtils;
-
-import com.sun.net.httpserver.HttpExchange;
 
 /*
  * Transform between stubby & HttpExchange structures
@@ -45,7 +45,7 @@ public class Transformer {
         result.setPath(exchange.getRequestURI().getPath());
         String method = exchange.getRequestMethod().toUpperCase(); // method should always be upper-case
         result.setMethod(method);
-        if (!method.equals("GET")) { // GET requests don't (shouldn't) have a body or content type
+        if (!"GET".equals(method)) { // GET requests don't (shouldn't) have a body or content type
             try {
                 result.setBody(IOUtils.toString(exchange.getRequestBody()));
             } catch (IOException e) {
@@ -67,9 +67,8 @@ public class Transformer {
         if (message.getBody() instanceof String) {
             IOUtils.write(message.getBody().toString(), exchange.getResponseBody());
         } else {
-            JsonUtils.serialize(exchange.getResponseBody(), message.getBody()); // assume deserialised JSON (ie, a Map) 
+            JsonUtils.serialize(exchange.getResponseBody(), message.getBody()); // assume deserialised JSON (ie, a Map)
         }
         exchange.getResponseBody().close();
     }
-
 }

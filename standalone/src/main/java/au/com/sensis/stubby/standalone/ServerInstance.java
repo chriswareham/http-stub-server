@@ -8,8 +8,6 @@ public abstract class ServerInstance {
 
     public static final int SOCKET_BACKLOG = 10;
 
-    public abstract HttpServer getServer();
-
     protected static InetSocketAddress allInterfaces(int port) {
         return new InetSocketAddress(port);
     }
@@ -22,4 +20,5 @@ public abstract class ServerInstance {
         return getServer().getAddress();
     }
 
+    public abstract HttpServer getServer();
 }

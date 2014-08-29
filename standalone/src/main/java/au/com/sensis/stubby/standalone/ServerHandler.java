@@ -2,12 +2,15 @@ package au.com.sensis.stubby.standalone;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpStatus;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
 import org.apache.log4j.Logger;
 
 import au.com.sensis.stubby.model.StubParam;
@@ -19,12 +22,10 @@ import au.com.sensis.stubby.service.model.StubServiceResult;
 import au.com.sensis.stubby.utils.JsonUtils;
 import au.com.sensis.stubby.utils.RequestFilterBuilder;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 public class ServerHandler implements HttpHandler {
 
     private static final Logger LOGGER = Logger.getLogger(ServerHandler.class);
+    private static final Pattern CONTROL_PATTERN = Pattern.compile("^/_control/(.+?)(/(\\d+))?$");
 
     private StubService service;
     private JsonServiceInterface jsonService;
@@ -43,8 +44,12 @@ public class ServerHandler implements HttpHandler {
         this.shutdownHook = shutdownHook;
     }
 
+    @Override
     public void handle(HttpExchange exchange) {
-        long start = System.currentTimeMillis();
+        long start = 0L;
+        if (LOGGER.isTraceEnabled()) {
+            start = System.currentTimeMillis();
+        }
         try {
             // force clients to close connection to work around issue with Keep-Alive in HttpServer (Java 7)
             // see: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8009548
@@ -58,18 +63,18 @@ public class ServerHandler implements HttpHandler {
                 handleMatch(exchange);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e);
             try {
                 returnError(exchange, e.getMessage());
             } catch (IOException ex) {
                 LOGGER.error(ex);
-                ex.printStackTrace();
             }
         } finally {
             exchange.close();
         }
-        LOGGER.trace("Server handle processing time(ms): " + (System.currentTimeMillis() - start));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Server handle processing time(ms): " + (System.currentTimeMillis() - start));
+        }
     }
 
     private void handleMatch(HttpExchange exchange) throws Exception {
@@ -77,7 +82,9 @@ public class ServerHandler implements HttpHandler {
         if (result.matchFound()) {
             Long delay = result.getDelay();
             if (delay != null && delay > 0) {
-                LOGGER.info("Delayed request, sleeping for " + delay + " ms...");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Delayed request, sleeping for " + delay + " ms...");
+                }
                 Thread.sleep(delay);
             }
             Transformer.populateExchange(result.getResponse(), exchange);
@@ -88,69 +95,68 @@ public class ServerHandler implements HttpHandler {
 
     private void handleControl(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
-        Pattern pattern = Pattern.compile("^/_control/(.+?)(/(\\d+))?$");
-        Matcher matcher = pattern.matcher(path);
+        Matcher matcher = CONTROL_PATTERN.matcher(path);
         if (matcher.matches()) {
-            String object = matcher.group(1);
+            String endpoint = matcher.group(1);
             String indexStr = matcher.group(3);
             if (indexStr != null) {
                 int index = Integer.parseInt(indexStr);
-                if (object.equals("requests")) {
+                if ("requests".equals(endpoint)) {
                     handleRequest(exchange, index);
-                } else if (object.equals("responses")) {
+                } else if ("responses".equals(endpoint)) {
                     handleResponse(exchange, index);
                 } else {
-                    throw new RuntimeException("Unknown object: " + object);
+                    returnNotFound(exchange, "No control method matched request");
                 }
             } else {
-                if (object.equals("requests")) {
+                if ("requests".equals(endpoint)) {
                     handleRequests(exchange);
-                } else if (object.equals("responses")) {
+                } else if ("responses".equals(endpoint)) {
                     handleResponses(exchange);
-                } else if (object.equals("shutdown")) {
+                } else if ("shutdown".equals(endpoint)) {
                     handleShutdown(exchange);
-                } else if (object.equals("version")) {
+                } else if ("version".equals(endpoint)) {
                     handleVersion(exchange);
                 } else {
-                    throw new RuntimeException("Unknown object: " + object);
+                    returnNotFound(exchange, "No control method matched request");
                 }
             }
         }
     }
 
     private void returnOk(HttpExchange exchange) throws IOException {
-        exchange.sendResponseHeaders(HttpStatus.SC_OK, -1); // no body
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, -1); // no body
         exchange.getResponseBody().close();
     }
 
     private void returnNotFound(HttpExchange exchange, String message) throws IOException {
-        exchange.sendResponseHeaders(HttpStatus.SC_NOT_FOUND, 0); // unknown body length
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0); // unknown body length
         exchange.getResponseBody().write(message.getBytes());
         exchange.getResponseBody().close();
     }
 
     private void returnError(HttpExchange exchange, String message) throws IOException {
-        exchange.sendResponseHeaders(HttpStatus.SC_INTERNAL_SERVER_ERROR, 0); // unknown body length
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0); // unknown body length
         exchange.getResponseBody().write(message.getBytes());
         exchange.getResponseBody().close();
     }
 
     private void returnJson(HttpExchange exchange, Object model) throws IOException {
         exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(HttpStatus.SC_OK, 0); // unknown body length
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0); // unknown body length
         JsonUtils.serialize(exchange.getResponseBody(), model);
         exchange.getResponseBody().close();
     }
 
     private void handleResponses(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-        if (method.equals("POST")) {
+        if ("POST".equals(method)) {
             jsonService.addResponse(exchange.getRequestBody());
             returnOk(exchange);
-        } else if (method.equals("DELETE")) {
+        } else if ("DELETE".equals(method)) {
             service.deleteResponses();
             returnOk(exchange);
-        } else if (method.equals("GET")) {
+        } else if ("GET".equals(method)) {
             returnJson(exchange, service.getResponses());
         } else {
             throw new RuntimeException("Unsupported method: " + method);
@@ -159,7 +165,7 @@ public class ServerHandler implements HttpHandler {
 
     private void handleResponse(HttpExchange exchange, int index) throws IOException {
         String method = exchange.getRequestMethod();
-        if (method.equals("GET")) {
+        if ("GET".equals(method)) {
             try {
                 returnJson(exchange, service.getResponse(index));
             } catch (NotFoundException e) {
@@ -172,10 +178,10 @@ public class ServerHandler implements HttpHandler {
 
     private void handleRequests(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-        if (method.equals("DELETE")) {
+        if ("DELETE".equals(method)) {
             service.deleteRequests();
             returnOk(exchange);
-        } else if (method.equals("GET")) {
+        } else if ("GET".equals(method)) {
             List<StubParam> params = Transformer.fromExchangeParams(exchange);
             StubRequest filter = createFilter(params);
             Long wait = getWaitParam(params);
@@ -191,7 +197,7 @@ public class ServerHandler implements HttpHandler {
 
     private void handleRequest(HttpExchange exchange, int index) throws IOException {
         String method = exchange.getRequestMethod();
-        if (method.equals("GET")) {
+        if ("GET".equals(method)) {
             try {
                 returnJson(exchange, service.getRequest(index));
             } catch (NotFoundException e) {
@@ -236,5 +242,4 @@ public class ServerHandler implements HttpHandler {
             stream.close();
         }
     }
-
 }

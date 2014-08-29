@@ -15,9 +15,9 @@ public class HttpServerInstance extends ServerInstance {
         this.server.setExecutor(executor);
         this.server.start();
     }
-    
+
+    @Override
     public HttpServer getServer() {
         return server;
     }
-    
 }

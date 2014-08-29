@@ -1,6 +1,5 @@
 package au.com.sensis.stubby.standalone;
 
-import au.com.sensis.stubby.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -8,6 +7,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+
+import au.com.sensis.stubby.utils.StringUtils;
 
 public class Main {
 
@@ -47,13 +48,17 @@ public class Main {
 
         if (port > 0) { // HTTP server
             HttpServerInstance httpServer = new HttpServerInstance(port, handler, executor);
-            LOGGER.info("Started HTTP server on " + httpServer.getAddress());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Started HTTP server on " + httpServer.getAddress());
+            }
             servers.add(httpServer);
         }
 
         if (sslPort > 0) { // HTTPS server
             HttpsServerInstance httpsServer = new HttpsServerInstance(sslPort, handler, executor);
-            LOGGER.info("Started HTTPS server on " + httpsServer.getAddress());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Started HTTPS server on " + httpsServer.getAddress());
+            }
             servers.add(httpsServer);
         }
 
@@ -75,5 +80,4 @@ public class Main {
         handler.setShutdownHook(shutdownHook); // handle shutdown requests over HTTP
         Runtime.getRuntime().addShutdownHook(shutdownHook); // handle SIGINT etc.
     }
-
 }
