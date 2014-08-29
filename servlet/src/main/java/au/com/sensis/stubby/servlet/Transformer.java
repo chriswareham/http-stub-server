@@ -22,24 +22,28 @@ import au.com.sensis.stubby.utils.JsonUtils;
  */
 public class Transformer {
 
+    private Transformer() {
+        super();
+    }
+
     @SuppressWarnings("unchecked")
     public static List<StubParam> fromServletHeaders(HttpServletRequest request) {
         List<StubParam> result = new  ArrayList<StubParam>();
-        Enumeration<String> headers = (Enumeration<String>)request.getHeaderNames();
+        Enumeration<String> headers = request.getHeaderNames();
         while (headers.hasMoreElements()) {
             String headerName = headers.nextElement();
-            Enumeration<String> headerValues = (Enumeration<String>)request.getHeaders(headerName);
+            Enumeration<String> headerValues = request.getHeaders(headerName);
             while (headerValues.hasMoreElements()) {
                 result.add(new StubParam(headerName, headerValues.nextElement()));
             }
         }
         return result;
     }
-    
+
     @SuppressWarnings("unchecked")
     public static List<StubParam> fromServletParams(HttpServletRequest request) {
         List<StubParam> result = new ArrayList<StubParam>();
-        Enumeration<String> params = (Enumeration<String>)request.getParameterNames();
+        Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String paramName = params.nextElement();
             for (String value : request.getParameterValues(paramName)) {
@@ -57,8 +61,8 @@ public class Transformer {
             throw new RuntimeException(e);
         }
         String method = request.getMethod().toUpperCase(); // method should always be upper-case
-        result.setMethod(method); 
-        if (!method.equals("GET")) { // GET requests don't (shouldn't) have a body or content type
+        result.setMethod(method);
+        if (!"GET".equals(method)) { // GET requests don't (shouldn't) have a body or content type
             try {
                 result.setBody(IOUtils.toString(request.getInputStream()));
             } catch (IOException e) {
@@ -80,7 +84,7 @@ public class Transformer {
         if (message.getBody() instanceof String) {
             IOUtils.write(message.getBody().toString(), response.getOutputStream());
         } else {
-            JsonUtils.serialize(response.getOutputStream(), message.getBody()); // assume deserialised JSON (ie, a Map) 
+            JsonUtils.serialize(response.getOutputStream(), message.getBody()); // assume deserialised JSON (ie, a Map)
         }
     }
 

@@ -25,7 +25,9 @@ public class MatcherServlet extends AbstractStubServlet {
             if (result.matchFound()) {
                 Long delay = result.getDelay();
                 if (delay != null && delay > 0) {
-                    LOGGER.info("Delayed request, sleeping for " + delay + " ms...");
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("Delayed request, sleeping for " + delay + " ms...");
+                    }
                     Thread.sleep(delay);
                 }
                 Transformer.populateServletResponse(result.getResponse(), response);
@@ -33,13 +35,11 @@ public class MatcherServlet extends AbstractStubServlet {
                 returnNotFound(response, "No stubbed method matched request");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e);
             try {
                 returnError(response, e.getMessage());
             } catch (IOException ex) {
                 LOGGER.error(ex);
-                ex.printStackTrace();
             }
         }
     }

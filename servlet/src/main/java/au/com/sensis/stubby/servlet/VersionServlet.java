@@ -8,13 +8,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@SuppressWarnings("serial")
 public class VersionServlet extends AbstractStubServlet {
 
-    private static final long serialVersionUID = 1L;
-
     private Properties readVersionProps() throws IOException {
-        InputStream stream = getClass().getResourceAsStream(
-                "/au/com/sensis/stubby/servlet/version.properties");
+        InputStream stream = getClass().getResourceAsStream("/au/com/sensis/stubby/servlet/version.properties");
         try {
             Properties props = new Properties();
             props.load(stream);
