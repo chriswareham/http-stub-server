@@ -7,7 +7,7 @@ The Generic HTTP Stub Server (a.k.a. 'Stubby') is a protocol and server implemen
 
 ## Overview
 
-A typical use case is a web application that depends on some back-end service. You might want to perform acceptance testing of your web application, say via Cucumber + Selenium. 
+A typical use case is a web application that depends on some back-end service. You might want to perform acceptance testing of your web application, say via Cucumber + Selenium.
 
 However you don't want to use a real instance of the back-end service for many reasons (it's not actually completed yet, there's no integration testing environment or you just plain don't want to couple your testing together). This is where the Generic HTTP Stub comes in. You can use it in place of the back-end service, much like you might use Mockito in your unit tests.
 
@@ -19,7 +19,7 @@ Let's say that we have a back-end service that exposes an endpoint for fetching 
 
 We might have a Cucumber feature that looks something like this:
 
-    Given the following product exists 
+    Given the following product exists
         | ID  | Name                 |
         | 100 | USB Missile Launcher |
     When I view the product information page for product '100'
@@ -30,7 +30,7 @@ To stub the product information in the _given_ step we could send the following 
     {
         "request": {
             "method": "GET",
-            "path": "/products/1000"
+            "path": "/products/100"
         },
         "response": {
             "status": 200,
@@ -56,7 +56,7 @@ Now if we wanted to test a failure scenario such as:
     When I view the product information page for product '100'
     Then I should see a 'Product not found' message
 
-We could simply send the following message to the server instead: 
+We could simply send the following message to the server instead:
 
     {
         "request": {
@@ -73,7 +73,7 @@ Which tells the stub server when it receives a `GET` request matching any path s
 
 ### Making things even simpler
 
-To make things even simpler, and to save you having to construct JSON messages and post them to the stub server, there is simple client library for Ruby (more languages to come). 
+To make things even simpler, and to save you having to construct JSON messages and post them to the stub server, there is simple client library for Ruby (more languages to come).
 
 For example, if you were using Ruby to implement the examples above you could write:
 
@@ -81,7 +81,7 @@ For example, if you were using Ruby to implement the examples above you could wr
         :productId => 100,
         :productName => 'USB Missile Launcher'
     }
-    @stubby.get('/products/1000').return(200, product).stub!
+    @stubby.get('/products/100').return(200, product).stub!
 
 And for the failure scenario:
 
@@ -108,7 +108,7 @@ The stub server implements a really simple JSON-based protocol for querying and 
 The stub server has a number of endpoints for adding stub data, verifying requests and resetting the state. Every other URL is available to be stubbed.
 
 * `GET /_control/requests/{index}`
-  
+
   Retrieves details of HTTP requests that have been sent to the stub server by index, where zero is the most recent request received.
 
 * `DELETE /_control/requests`
@@ -126,11 +126,11 @@ The stub server has a number of endpoints for adding stub data, verifying reques
 * `DELETE /_control/responses`
 
   Deletes all stubbed requests.
-  
+
 * `GET /_control/shutdown`
 
   Performs and orderly shutdown of the server.
-  
+
 * `GET /_control/version`
 
   Returns the application version. Useful as a URL for checking that the server is alive.
@@ -143,6 +143,7 @@ A JSON object with the following fields:
 
     {
         "body": <object> | <array> | <string>
+        "file": <string>
         "headers": [
             {
                 "name": <string>
@@ -156,11 +157,15 @@ Field details:
 
 * `body`
 
-  HTTP message body. 
+  HTTP message body.
 
   When used in a pattern, can be an `object`, `array` or `string` (see Body Patterns).
 
   When returned from the _requests_ endpoint, will always be a `string`.
+
+* `file`
+
+  Path to a file containing the HTTP message body.
 
 * `headers`
 
@@ -190,7 +195,7 @@ Extends `HTTP Message` (above), with additional fields:
 * `method`
 
   String representing the HTTP method, always in upper-case. Interpreted as a regular expression when used in patterns.
-  
+
 * `path`
 
   String representing the _path_ component of the URL (ie, everything after the hostname up to, but not including, the query). Interpreted as a regular expression when used in patterns.
@@ -214,10 +219,10 @@ Extends `HTTP Message` (above), with additional fields:
 
 * `status`
 
-  Integer representing the HTTP status code. 
+  Integer representing the HTTP status code.
 
   **Required** when used in a pattern.
-  
+
 ### Stubbed Request
 
 This object is used by the `/_control/responses` endpoints and represents a stubbed request/response pair.
@@ -282,7 +287,7 @@ The following is an example of a request/response with a Groovy script that dyna
 
 ### Body Patterns
 
-The stub server currently supports two types of _body patterns_. A body pattern is specified by the `request.body` property in `Stubbed Request` message (above). For an incoming request to match the stubbed response, the body pattern must be matched. 
+The stub server currently supports two types of _body patterns_. A body pattern is specified by the `request.body` property in `Stubbed Request` message (above). For an incoming request to match the stubbed response, the body pattern must be matched.
 
 #### Text (Regular Expression)
 
@@ -321,7 +326,7 @@ Would match the following JSON body in an incoming request:
             "blah": "blah"
         },
         "blah": [ ],
-        "foo": 1234, 
+        "foo": 1234,
     }
 
 ### Body Responses
@@ -330,9 +335,9 @@ As with body patterns, when used in a response object, the `body` property can b
 
 If the body is a string, it is returned as text. If there is no header named `Content-Type` in the response, it is assumed to be `text/plain`.
 
-If the body is an array or an object, it is returned as JSON. If there is no header named `Content-Type` in the response, it is assumed to be `application/json`. 
+If the body is an array or an object, it is returned as JSON. If there is no header named `Content-Type` in the response, it is assumed to be `application/json`.
 
-Note that the returned JSON may not match the body property exactly, as it will be deserialised and then reserialised in the server. For example, the order of properties may change, escape sequences may be represented differently and the format/indenting will most likely differ. If you need to preserve the formatting exactly, provide the body as a string and set the `Content-Type` manually. 
+Note that the returned JSON may not match the body property exactly, as it will be deserialised and then reserialised in the server. For example, the order of properties may change, escape sequences may be represented differently and the format/indenting will most likely differ. If you need to preserve the formatting exactly, provide the body as a string and set the `Content-Type` manually.
 
 ## Building
 
@@ -351,12 +356,10 @@ Note that the returned JSON may not match the body property exactly, as it will 
 
 There are several different server implementation, and each is started in a different way. The simplest of the servers is the _standalone_ server.
 
-The standalone server uses the built-in HTTP server implementation in the Sun Java 6.0 (and above) VM. 
+The standalone server uses the built-in HTTP server implementation in the Sun Java 6.0 (and above) VM.
 
 To build the server and start it on port `9080` enter (`bash`/`sh`):
 
     $ cd standalone
     $ mvn package
     $ ./run.sh 9080
-
-
