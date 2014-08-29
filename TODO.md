@@ -15,6 +15,3 @@ Github TODO:
  - Add some downloadable artefacts?
  - Document JavaScript support
  - Document filtering support (/_control/requests?method=GET&path=...)
-
-Chris Wareham TODO:
- - Add support for reloading request/responses from the filesystem
