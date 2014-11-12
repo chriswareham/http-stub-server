@@ -16,6 +16,7 @@ import au.com.sensis.stubby.js.Script;
 import au.com.sensis.stubby.js.ScriptWorld;
 import au.com.sensis.stubby.model.StubExchange;
 import au.com.sensis.stubby.model.StubRequest;
+import au.com.sensis.stubby.model.StubResponse;
 import au.com.sensis.stubby.service.model.MatchResult;
 import au.com.sensis.stubby.service.model.RequestPattern;
 import au.com.sensis.stubby.service.model.StubServiceExchange;
@@ -28,7 +29,7 @@ public class StubService {
 
     private static final Logger LOGGER = Logger.getLogger(StubService.class);
 
-    private LinkedList<StubServiceExchange> responses = new LinkedList<StubServiceExchange>();
+    private LinkedList<StubServiceExchange> serviceExchanges = new LinkedList<StubServiceExchange>();
     private LinkedList<StubRequest> requests = new LinkedList<StubRequest>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -86,29 +87,34 @@ public class StubService {
         try {
             lock.readLock().lock();
             List<MatchResult> attempts = new ArrayList<MatchResult>();
-            for (StubServiceExchange response : responses) {
-                MatchResult matchResult = response.matches(request);
+            for (StubServiceExchange serviceExchange : serviceExchanges) {
+                MatchResult matchResult = serviceExchange.matches(request);
                 attempts.add(matchResult);
                 if (matchResult.matches()) {
                     if (LOGGER.isInfoEnabled()) {
                         LOGGER.info("Matched: " + request.getPath() + "");
                     }
-                    StubExchange exchange = response.getExchange();
-                    if (response.isScript()) {
-                        ScriptWorld world = new ScriptWorld(request, response.getResponseBody(), exchange); // creates deep copies of objects
-                        new Script(response.getScript().getScript()).execute(world);
+                    StubExchange exchange = serviceExchange.getExchange();
+                    if (serviceExchange.isScript()) {
+                        ScriptWorld world = new ScriptWorld(request, serviceExchange.getResponseBody(), exchange); // creates deep copies of objects
+                        new Script(serviceExchange.getScript().getScript()).execute(world);
                         return new StubServiceResult(attempts, world.getResponse(), world.getDelay());
+                    } else {
+                        StubResponse response = new StubResponse(exchange.getResponse());
+                        if (serviceExchange.getResponseBody() != null) {
+                            response.setBody(serviceExchange.getResponseBody().getBody());
+                        }
+                        return new StubServiceResult(attempts, response, exchange.getDelay());
                     }
-                    return new StubServiceResult(attempts, exchange.getResponse(), exchange.getDelay());
                 }
             }
 
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Didn't match: " + request.getPath());
             }
-/* XXX should this only fire on matches?
+
             notifyAll(); // inform any waiting threads that a new request has come in
-*/
+
             return new StubServiceResult(attempts); // no match (empty list)
         } catch (Exception e) {
             throw new RuntimeException("Error matching request", e);
@@ -120,7 +126,7 @@ public class StubService {
     public StubServiceExchange getResponse(int index) throws NotFoundException {
         lock.readLock().lock();
         try {
-            return responses.get(index);
+            return serviceExchanges.get(index);
         } catch (IndexOutOfBoundsException e) {
             throw new NotFoundException("Response does not exist: " + index);
         } finally {
@@ -131,7 +137,7 @@ public class StubService {
     public List<StubServiceExchange> getResponses() {
         lock.readLock().lock();
         try {
-            return new ArrayList<StubServiceExchange>(responses);
+            return new ArrayList<StubServiceExchange>(serviceExchanges);
         } finally {
             lock.readLock().unlock();
         }
@@ -143,7 +149,7 @@ public class StubService {
         }
         lock.writeLock().lock();
         try {
-            responses.remove(index);
+            serviceExchanges.remove(index);
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException("Response does not exist: " + index);
         } finally {
@@ -155,7 +161,7 @@ public class StubService {
         LOGGER.trace("Deleting all responses");
         lock.writeLock().lock();
         try {
-            responses.clear();
+            serviceExchanges.clear();
         } finally {
             lock.writeLock().unlock();
         }
@@ -242,7 +248,7 @@ public class StubService {
 
     private void addResponseInternal(StubExchange exchange) {
         StubServiceExchange internal = new StubServiceExchange(exchange);
-        responses.remove(internal); // remove existing stubbed request (ie, will never match anymore)
-        responses.addFirst(internal); // ensure most recent match first
+        serviceExchanges.remove(internal); // remove existing stubbed request (ie, will never match anymore)
+        serviceExchanges.addFirst(internal); // ensure most recent match first
     }
 }
