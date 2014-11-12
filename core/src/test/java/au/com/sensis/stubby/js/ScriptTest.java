@@ -91,18 +91,18 @@ public class ScriptTest {
 
     @Test
     public void testSimpleExpr() {
-        assertEquals(new Double(3), execute("var a = 1; var b = 2; a + b;"));
+        assertEquals(Double.valueOf(3.0), execute("var a = 1; var b = 2; a + b;"));
     }
 
     @Test
     public void testGetDelay() {
-        assertEquals(new Long(1234), execute("exchange.delay"));
+        assertEquals(Long.valueOf(1234L), execute("exchange.delay"));
     }
 
     @Test
     public void setSetDelay() {
         execute("exchange.delay = 666");
-        assertEquals(new Long(666), world.getDelay());
+        assertEquals(Long.valueOf(666L), world.getDelay());
     }
 
     @Test

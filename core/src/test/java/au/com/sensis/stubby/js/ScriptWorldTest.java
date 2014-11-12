@@ -1,8 +1,6 @@
 package au.com.sensis.stubby.js;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,34 +9,39 @@ import au.com.sensis.stubby.model.StubRequest;
 import au.com.sensis.stubby.model.StubResponse;
 
 public class ScriptWorldTest {
+    private static final String PATH = "/request/path";
+    private static final String SCRIPT_TYPE = "JavaScript";
+    private static final Long DELAY = 123L;
 
     private StubRequest request;
-    private StubExchange response;
+    private StubExchange exchange;
 
     @Before
     public void before() {
         request = new StubRequest();
-        request.setPath("/request/path");
+        request.setPath(PATH);
 
-        response = new StubExchange();
-        response.setScriptType("JavaScript");
-        response.setResponse(new StubResponse());
-        response.setRequest(new StubRequest());
-        response.setDelay(123L);
+        exchange = new StubExchange();
+        exchange.setScriptType(SCRIPT_TYPE);
+        exchange.setRequest(new StubRequest());
+        exchange.setResponse(new StubResponse());
+        exchange.setDelay(DELAY);
     }
 
     @Test
     public void testCopiesFields() {
-        ScriptWorld world = new ScriptWorld(request, null, response);
+        ScriptWorld world = new ScriptWorld(request, null, exchange);
 
-        assertTrue(world.getRequest() != response.getRequest()); // should be different instances
-        assertTrue(world.getResponse() != response.getResponse());
+        // should be different instances
+        Assert.assertNotSame(exchange.getRequest(), world.getRequest());
+        Assert.assertNotSame(exchange.getResponse(), world.getResponse());
 
-        assertEquals("/request/path", world.getRequest().getPath()); // ensure we use the acutal request, not request pattern
+        // ensure we use the actual request, not request pattern
+        Assert.assertEquals(PATH, world.getRequest().getPath());
 
-        assertEquals("JavaScript", world.getScriptType());
+        Assert.assertEquals(SCRIPT_TYPE, world.getScriptType());
 
-        assertTrue(world.getDelay().equals(response.getDelay())); // immutable anyway...
+        // immutable anyway...
+        Assert.assertEquals(DELAY, world.getDelay());
     }
-
 }

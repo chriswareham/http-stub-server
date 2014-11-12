@@ -10,7 +10,7 @@ public class Script {
 
     private String source;
 
-    public Script(String source) {
+    public Script(final String source) {
         this.source = source;
     }
 
@@ -18,7 +18,7 @@ public class Script {
         return source;
     }
 
-    private ScriptEngine createEngine(String scriptType) {
+    private ScriptEngine createEngine(final String scriptType) {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(scriptType != null ? scriptType : DEFAULT_SCRIPT_TYPE);
         if (engine == null) {
@@ -28,7 +28,7 @@ public class Script {
         return engine;
     }
 
-    public Object execute(ScriptWorld world) {
+    public Object execute(final ScriptWorld world) {
         ScriptEngine engine = createEngine(world.getScriptType()); // TODO: refactor to use 'exhange.scriptType'
 
         engine.put("request", world.getRequest()); // TODO: refactor to use 'exchange.request'
