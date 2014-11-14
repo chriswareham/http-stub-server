@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * This class provides utilities for reading the contents of files to strings.
  */
-public class FileUtils {
+public final class FileUtils {
     /**
      * Read the contents of a file to a string.
      *
@@ -63,5 +63,12 @@ public class FileUtils {
                 // ignored
             }
         }
+    }
+
+    /**
+     * Private constructor to prevent instantiation of utility class.
+     */
+    private FileUtils() {
+        super();
     }
 }

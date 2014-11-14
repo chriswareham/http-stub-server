@@ -12,7 +12,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 /**
  * This class provides utilities for serialising and deserialising JSON data.
  */
-public class JsonUtils {
+public final class JsonUtils {
     /**
      * Get an object mapper for serialising and deserialising JSON data.
      *
@@ -121,5 +121,12 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Error deserializing JSON", e);
         }
+    }
+
+    /**
+     * Private constructor to prevent instantiation of utility class.
+     */
+    private JsonUtils() {
+        super();
     }
 }
