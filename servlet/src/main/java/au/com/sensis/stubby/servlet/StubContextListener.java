@@ -15,9 +15,11 @@ public class StubContextListener implements ServletContextListener {
 
         ServletContext context = event.getServletContext();
         context.setAttribute(AbstractStubServlet.SERVICE_CONTEXT_KEY, stubService);
+        ServletContextResourceResolver resolver = new ServletContextResourceResolver();
+        resolver.setServletContext(context);
         String filename = context.getInitParameter(RESPONSES_INIT_PARAMETER);
         if (filename != null) {
-            stubService.loadResponses(filename);
+            stubService.loadResponses(resolver, filename);
         }
     }
 

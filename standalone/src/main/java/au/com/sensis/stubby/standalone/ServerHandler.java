@@ -19,13 +19,16 @@ import au.com.sensis.stubby.service.JsonServiceInterface;
 import au.com.sensis.stubby.service.NotFoundException;
 import au.com.sensis.stubby.service.StubService;
 import au.com.sensis.stubby.service.model.StubServiceResult;
+import au.com.sensis.stubby.utils.FileSystemResourceResolver;
 import au.com.sensis.stubby.utils.JsonUtils;
 import au.com.sensis.stubby.utils.RequestFilterBuilder;
+import au.com.sensis.stubby.utils.ResourceResolver;
 
 public class ServerHandler implements HttpHandler {
 
     private static final Logger LOGGER = Logger.getLogger(ServerHandler.class);
     private static final Pattern CONTROL_PATTERN = Pattern.compile("^/_control/(.+?)(/(\\d+))?$");
+    private static final ResourceResolver RESOLVER = new FileSystemResourceResolver();
 
     private StubService service;
     private JsonServiceInterface jsonService;
@@ -37,7 +40,7 @@ public class ServerHandler implements HttpHandler {
     }
 
     public void loadResponses(String filename) {
-        service.loadResponses(filename);
+        service.loadResponses(RESOLVER, filename);
     }
 
     public void setShutdownHook(Thread shutdownHook) {
