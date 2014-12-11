@@ -17,12 +17,12 @@ import au.com.sensis.stubby.utils.RequestFilterBuilder;
 @SuppressWarnings("serial")
 public class RequestsServlet extends AbstractStubServlet {
 
-    private StubRequest createFilter(HttpServletRequest request) {
+    private StubRequest createFilter(final HttpServletRequest request) {
         List<StubParam> params = Transformer.fromServletParams(request);
         return new RequestFilterBuilder().fromParams(params).getFilter();
     }
 
-    private Long getWaitParam(HttpServletRequest request) {
+    private Long getWaitParam(final HttpServletRequest request) {
         String waitStr = request.getParameter("wait");
         if (waitStr != null) {
             return Long.parseLong(waitStr);
@@ -32,7 +32,7 @@ public class RequestsServlet extends AbstractStubServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         StubRequest filter = createFilter(request);
         Long wait = getWaitParam(request);
         if (wait != null && wait > 0) { // don't allow zero wait
@@ -43,9 +43,8 @@ public class RequestsServlet extends AbstractStubServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         service().deleteRequests();
         returnOk(response);
     }
-
 }

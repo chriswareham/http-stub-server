@@ -4,7 +4,7 @@
     <parent>
         <groupId>au.com.sensis</groupId>
         <artifactId>http-stub-server</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
     </parent>
 
     <artifactId>http-stub-server-servlet</artifactId>

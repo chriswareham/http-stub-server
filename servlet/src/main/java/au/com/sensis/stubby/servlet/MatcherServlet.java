@@ -19,7 +19,7 @@ public class MatcherServlet extends AbstractStubServlet {
     private static final Logger LOGGER = Logger.getLogger(MatcherServlet.class);
 
     @Override
-    public void service(HttpServletRequest request, HttpServletResponse response) {
+    public void service(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             StubServiceResult result = service().findMatch(Transformer.fromServletRequest(request));
             if (result.matchFound()) {
@@ -43,5 +43,4 @@ public class MatcherServlet extends AbstractStubServlet {
             }
         }
     }
-
 }

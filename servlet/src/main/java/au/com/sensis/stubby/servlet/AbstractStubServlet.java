@@ -27,40 +27,39 @@ public abstract class AbstractStubServlet extends HttpServlet {
 
     protected StubService service() {
         StubService service = (StubService) getServletContext().getAttribute(SERVICE_CONTEXT_KEY);
-        if (service != null) {
-            return service;
-        } else {
-            throw new IllegalStateException("Service not created"); // ensure StubContextListener was invoked first
+        if (service == null) {
+            throw new IllegalStateException("Service not created");
         }
+        return service;
     }
 
     protected JsonServiceInterface jsonService() {
         return new JsonServiceInterface(service());
     }
 
-    protected void returnOk(HttpServletResponse response) throws IOException {
+    protected void returnOk(final HttpServletResponse response) throws IOException {
         response.setStatus(HttpURLConnection.HTTP_OK);
         response.getOutputStream().close(); // no body
     }
 
-    protected void returnString(HttpServletResponse response, String message) throws IOException {
+    protected void returnString(final HttpServletResponse response, final String message) throws IOException {
         response.setContentType("text/plain");
         Writer writer = response.getWriter();
         writer.write(message);
         writer.close();
     }
 
-    protected void returnNotFound(HttpServletResponse response, String message) throws IOException {
+    protected void returnNotFound(final HttpServletResponse response, final String message) throws IOException {
         response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         returnString(response, message);
     }
 
-    protected void returnError(HttpServletResponse response, String message) throws IOException {
+    protected void returnError(final HttpServletResponse response, final String message) throws IOException {
         response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
         returnString(response, message);
     }
 
-    protected void returnJson(HttpServletResponse response, Object model) throws IOException {
+    protected void returnJson(final HttpServletResponse response, final Object model) throws IOException {
         response.setStatus(HttpURLConnection.HTTP_OK);
         response.setHeader("Content-Type", "application/json");
         OutputStream stream = response.getOutputStream();
@@ -69,28 +68,13 @@ public abstract class AbstractStubServlet extends HttpServlet {
     }
 
     /*
-     * Get everything after the servlet path and convert to string (eg, '/_control/requests/99' => 99)
+     * Get everything after the servlet path and convert to an integer (eg, '/_control/requests/99' => 99)
      */
-    protected int getId(HttpServletRequest request) {
+    protected int getId(final HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         if (pathInfo.startsWith("/")) {
             pathInfo = pathInfo.substring(1); // trim slash
         }
         return Integer.parseInt(pathInfo);
     }
-
-//    protected <T> T parseJsonBody(HttpServletRequest request, Class<T> bodyClass) throws IOException {
-//        String contentType = request.getHeader("Content-Type");
-//        if (contentType != null && contentType.startsWith("application/json")) {
-//            InputStream stream = request.getInputStream();
-//            try {
-//                return mapper.readValue(stream, bodyClass);
-//            } finally {
-//                stream.close();
-//            }
-//        } else {
-//            throw new RuntimeException("Unexpected content type");
-//        }
-//    }
-
 }

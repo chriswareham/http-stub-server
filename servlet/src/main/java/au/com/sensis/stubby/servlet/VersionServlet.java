@@ -23,9 +23,7 @@ public class VersionServlet extends AbstractStubServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         returnJson(response, readVersionProps());
     }
-
 }

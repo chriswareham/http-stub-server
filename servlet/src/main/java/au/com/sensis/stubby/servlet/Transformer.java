@@ -22,70 +22,69 @@ import au.com.sensis.stubby.utils.JsonUtils;
  */
 public class Transformer {
 
-    private Transformer() {
-        super();
-    }
-
     @SuppressWarnings("unchecked")
-    public static List<StubParam> fromServletHeaders(HttpServletRequest request) {
-        List<StubParam> result = new  ArrayList<StubParam>();
+    public static List<StubParam> fromServletHeaders(final HttpServletRequest request) {
+        List<StubParam> stubParams = new  ArrayList<StubParam>();
         Enumeration<String> headers = request.getHeaderNames();
         while (headers.hasMoreElements()) {
             String headerName = headers.nextElement();
             Enumeration<String> headerValues = request.getHeaders(headerName);
             while (headerValues.hasMoreElements()) {
-                result.add(new StubParam(headerName, headerValues.nextElement()));
+                stubParams.add(new StubParam(headerName, headerValues.nextElement()));
             }
         }
-        return result;
+        return stubParams;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<StubParam> fromServletParams(HttpServletRequest request) {
-        List<StubParam> result = new ArrayList<StubParam>();
+    public static List<StubParam> fromServletParams(final HttpServletRequest request) {
+        List<StubParam> stubParams = new ArrayList<StubParam>();
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String paramName = params.nextElement();
-            for (String value : request.getParameterValues(paramName)) {
-                result.add(new StubParam(paramName, value));
+            for (String paramValue : request.getParameterValues(paramName)) {
+                stubParams.add(new StubParam(paramName, paramValue));
             }
         }
-        return result;
+        return stubParams;
     }
 
-    public static StubRequest fromServletRequest(HttpServletRequest request) {
-        StubRequest result = new StubRequest();
+    public static StubRequest fromServletRequest(final HttpServletRequest request) {
+        StubRequest stubRequest = new StubRequest();
         try {
-            result.setPath(new URI(request.getRequestURL().toString()).getPath());
+            stubRequest.setPath(new URI(request.getRequestURL().toString()).getPath());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
         String method = request.getMethod().toUpperCase(); // method should always be upper-case
-        result.setMethod(method);
+        stubRequest.setMethod(method);
         if (!"GET".equals(method)) { // GET requests don't (shouldn't) have a body or content type
             try {
-                result.setBody(IOUtils.toString(request.getInputStream()));
+                stubRequest.setBody(IOUtils.toString(request.getInputStream()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        result.setParams(fromServletParams(request));
-        result.setHeaders(fromServletHeaders(request));
-        return result;
+        stubRequest.setParams(fromServletParams(request));
+        stubRequest.setHeaders(fromServletHeaders(request));
+        return stubRequest;
     }
 
-    public static void populateServletResponse(StubResponse message, HttpServletResponse response) throws IOException {
-        if (message.getHeaders() != null) {
-            for (StubParam header : message.getHeaders()) {
+    public static void populateServletResponse(final StubResponse stubResponse, final HttpServletResponse response) throws IOException {
+        if (stubResponse.getHeaders() != null) {
+            for (StubParam header : stubResponse.getHeaders()) {
                 response.addHeader(header.getName(), header.getValue());
             }
         }
-        response.setStatus(message.getStatus());
-        if (message.getBody() instanceof String) {
-            IOUtils.write(message.getBody().toString(), response.getOutputStream());
+        response.setStatus(stubResponse.getStatus());
+        if (stubResponse.getBody() instanceof String) {
+            IOUtils.write(stubResponse.getBody().toString(), response.getOutputStream());
         } else {
-            JsonUtils.serialize(response.getOutputStream(), message.getBody()); // assume deserialised JSON (ie, a Map)
+            JsonUtils.serialize(response.getOutputStream(), stubResponse.getBody()); // assume deserialised JSON (ie, a Map)
         }
     }
 
+    private Transformer() {
+        super();
+    }
 }

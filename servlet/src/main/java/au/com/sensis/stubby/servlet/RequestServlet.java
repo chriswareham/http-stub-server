@@ -15,12 +15,11 @@ import au.com.sensis.stubby.service.NotFoundException;
 public class RequestServlet extends AbstractStubServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         try {
             returnJson(response, service().getRequest(getId(request)));
         } catch (NotFoundException e) {
             returnNotFound(response, e.getMessage());
         }
     }
-
 }
