@@ -1,7 +1,12 @@
 package au.com.sensis.stubby.model;
 
+/**
+ * This class describes a stubbed response.
+ */
 public class StubResponse extends StubMessage {
-
+    /**
+     * The response status.
+     */
     private Integer status;
 
     /**
@@ -21,10 +26,20 @@ public class StubResponse extends StubMessage {
         this.status = response.status;
     }
 
+    /**
+     * Get the response status.
+     *
+     * @return the response status
+     */
     public Integer getStatus() {
         return status;
     }
 
+    /**
+     * Set the response status.
+     *
+     * @param status the response status
+     */
     public void setStatus(final Integer status) {
         this.status = status;
     }

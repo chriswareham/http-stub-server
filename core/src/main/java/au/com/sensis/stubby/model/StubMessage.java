@@ -110,6 +110,12 @@ public abstract class StubMessage {
         this.file = file;
     }
 
+    /**
+     * Set a header.
+     *
+     * @param name the header name
+     * @param value the header value
+     */
     @JsonIgnore
     public void setHeader(final String name, final String value) {
         if (headers == null) {
@@ -118,8 +124,14 @@ public abstract class StubMessage {
         headers.add(new StubParam(name, value));
     }
 
+    /**
+     * Get the value of the first header with a specific name.
+     *
+     * @param name the header name (case-insensitive)
+     * @return the value of the first header with the name, or null if there are none
+     */
     @JsonIgnore
-    public String getHeader(final String name) { // get first, case insensitive lookup
+    public String getHeader(final String name) {
         if (headers != null) {
             for (StubParam header : headers) {
                 if (header.getName().equalsIgnoreCase(name)) {
@@ -130,8 +142,14 @@ public abstract class StubMessage {
         return null;
     }
 
+    /**
+     * Get the values of all headers with a specific name.
+     *
+     * @param name the header name (case-insensitive)
+     * @return the values of all the headers with the name
+     */
     @JsonIgnore
-    public List<String> getHeaders(final String name) { // get all, case insensitive lookup
+    public List<String> getHeaders(final String name) {
         List<String> l = new ArrayList<String>();
         if (headers != null) {
             for (StubParam header : headers) {
@@ -143,8 +161,13 @@ public abstract class StubMessage {
         return l;
     }
 
+    /**
+     * Remove all headers with a specific name.
+     *
+     * @param name the header name (case-insensitive)
+     */
     @JsonIgnore
-    public void removeHeaders(final String name) { // case insensitive lookup
+    public void removeHeaders(final String name) {
         if (headers != null) {
             for (Iterator<StubParam> i = headers.iterator(); i.hasNext();) {
                 if (i.next().getName().equalsIgnoreCase(name)) {
