@@ -1,14 +1,17 @@
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>au.com.sensis</groupId>
         <artifactId>http-stub-server</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
     </parent>
 
     <artifactId>http-stub-server-standalone</artifactId>
-    <packaging>jar</packaging>
 
     <name>Generic HTTP Stub Server Stand-alone App.</name>
 
@@ -20,6 +23,28 @@
         </dependency>
 
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>au.com.sensis</groupId>
             <artifactId>http-stub-server-test</artifactId>
             <version>${project.version}</version>
@@ -27,15 +52,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <scope>test</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -50,17 +69,8 @@
                 </includes>
             </resource>
         </resources>
+
         <plugins>
-            <!--
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                     <dependenciesToScan>
-                        <dependency>au.com.sensis:http-stub-server-test</dependency>
-                    </dependenciesToScan>
-                </configuration>
-            </plugin>
-            -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -71,6 +81,7 @@
                     </archive>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>com.jolira</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>
