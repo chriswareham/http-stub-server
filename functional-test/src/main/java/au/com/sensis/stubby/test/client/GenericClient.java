@@ -19,7 +19,7 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 public abstract class GenericClient {
 
     private static final int MAX_CONNECTIONS = 10;
-    
+
     private URI baseUri;
     private HttpClient httpClient;
 
@@ -31,7 +31,7 @@ public abstract class GenericClient {
             throw new IllegalArgumentException("Invalid URI", e);
         }
     }
-    
+
     private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS);
@@ -52,17 +52,17 @@ public abstract class GenericClient {
         request.setEntity(new StringEntity(body, contentType));
         return execute(request);
     }
-    
+
     public GenericClientResponse executeDelete(String path) {
         HttpDelete request = new HttpDelete(makeUri(path));
         return execute(request);
     }
-    
+
     public GenericClientResponse executeGet(String path) {
         HttpGet request = new HttpGet(makeUri(path));
         return execute(request);
     }
-    
+
     public GenericClientResponse execute(HttpUriRequest request) {
         try {
            return new GenericClientResponse(httpClient.execute(request)); // consumes & releases connection
@@ -70,5 +70,5 @@ public abstract class GenericClient {
             throw new RuntimeException(String.format("Error executing '%s' to '%s'", request.getMethod(), request.getURI()), e);
         }
     }
-    
+
 }

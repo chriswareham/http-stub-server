@@ -21,7 +21,7 @@ import au.com.sensis.stubby.utils.JsonUtils;
  */
 public class Transformer {
 
-    public static List<StubParam> fromExchangeHeaders(HttpExchange exchange) {
+    public static List<StubParam> fromExchangeHeaders(final HttpExchange exchange) {
         List<StubParam> result = new ArrayList<StubParam>();
         for (Map.Entry<String, List<String>> entry : exchange.getRequestHeaders().entrySet()) {
             for (String value : entry.getValue()) {
@@ -31,7 +31,7 @@ public class Transformer {
         return result;
     }
 
-    public static List<StubParam> fromExchangeParams(HttpExchange exchange) {
+    public static List<StubParam> fromExchangeParams(final HttpExchange exchange) {
         List<NameValuePair> params = URLEncodedUtils.parse(exchange.getRequestURI(), "UTF-8");
         List<StubParam> result = new ArrayList<StubParam>();
         for (NameValuePair pair : params) {
@@ -40,7 +40,7 @@ public class Transformer {
         return result;
     }
 
-    public static StubRequest fromExchange(HttpExchange exchange) {
+    public static StubRequest fromExchange(final HttpExchange exchange) {
         StubRequest result = new StubRequest();
         result.setPath(exchange.getRequestURI().getPath());
         String method = exchange.getRequestMethod().toUpperCase(); // method should always be upper-case
@@ -57,7 +57,7 @@ public class Transformer {
         return result;
     }
 
-    public static void populateExchange(StubResponse message, HttpExchange exchange) throws IOException {
+    public static void populateExchange(final StubResponse message, final HttpExchange exchange) throws IOException {
         if (message.getHeaders() != null) {
             for (StubParam header : message.getHeaders()) {
                 exchange.getResponseHeaders().add(header.getName(), header.getValue());
@@ -70,5 +70,9 @@ public class Transformer {
             JsonUtils.serialize(exchange.getResponseBody(), message.getBody()); // assume deserialised JSON (ie, a Map)
         }
         exchange.getResponseBody().close();
+    }
+
+    private Transformer() {
+        super();
     }
 }

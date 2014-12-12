@@ -14,6 +14,7 @@ import au.com.sensis.stubby.model.StubRequest;
 import au.com.sensis.stubby.service.model.MatchField.FieldType;
 import au.com.sensis.stubby.utils.EqualsUtils;
 import au.com.sensis.stubby.utils.FileUtils;
+import au.com.sensis.stubby.utils.ResourceResolver;
 
 public class RequestPattern {
 
@@ -25,13 +26,13 @@ public class RequestPattern {
     private Set<ParamPattern> headers;
     private BodyPattern body;
 
-    public RequestPattern(StubRequest request) {
+    public RequestPattern(final ResourceResolver resolver, final StubRequest request) {
         this.method = toPattern(request.getMethod());
         this.path = toPattern(request.getPath());
         this.params = toPattern(request.getParams());
         this.headers = toPattern(request.getHeaders());
         if (request.getFile() != null) {
-            this.body = toBodyPattern(FileUtils.read(request.getFile()));
+            this.body = toBodyPattern(FileUtils.read(resolver.getResource(request.getFile())));
         } else {
             this.body = toBodyPattern(request.getBody());
         }
@@ -138,11 +139,11 @@ public class RequestPattern {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((method == null) ? 0 : method.pattern().hashCode());
-        result = prime * result + ((path == null) ? 0 : path.pattern().hashCode());
-        result = prime * result + ((body == null) ? 0 : body.hashCode());
-        result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-        result = prime * result + ((params == null) ? 0 : params.hashCode());
+        result = prime * result + (method == null  ? 0 : method.pattern().hashCode());
+        result = prime * result + (path == null    ? 0 : path.pattern().hashCode());
+        result = prime * result + (body == null    ? 0 : body.hashCode());
+        result = prime * result + (headers == null ? 0 : headers.hashCode());
+        result = prime * result + (params == null  ? 0 : params.hashCode());
         return result;
     }
 
@@ -153,7 +154,7 @@ public class RequestPattern {
                 && ((RequestPattern) obj).path.pattern().equals(path.pattern())
                 && ((RequestPattern) obj).params.equals(params)
                 && ((RequestPattern) obj).headers.equals(headers)
-                && EqualsUtils.safeEquals(((RequestPattern) obj).body, body);
+                && EqualsUtils.equals(((RequestPattern) obj).body, body);
     }
 
     @Override
@@ -180,5 +181,4 @@ public class RequestPattern {
     public Set<ParamPattern> getHeaders() {
         return headers;
     }
-
 }

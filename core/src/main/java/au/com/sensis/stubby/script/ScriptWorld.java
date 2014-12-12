@@ -1,4 +1,4 @@
-package au.com.sensis.stubby.js;
+package au.com.sensis.stubby.script;
 
 import au.com.sensis.stubby.model.StubExchange;
 import au.com.sensis.stubby.model.StubRequest;

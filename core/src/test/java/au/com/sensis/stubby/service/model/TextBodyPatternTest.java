@@ -1,7 +1,6 @@
 package au.com.sensis.stubby.service.model;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +25,8 @@ public class TextBodyPatternTest {
 
         MatchField result = pattern.matches(request);
 
-        assertEquals(FieldType.BODY, result.getFieldType());
-        assertEquals(MatchType.MATCH, result.getMatchType());
+        Assert.assertEquals(FieldType.BODY, result.getFieldType());
+        Assert.assertEquals(MatchType.MATCH, result.getMatchType());
     }
 
     private void assertRequestDoesNotMatch(String patternStr) {
@@ -35,14 +34,14 @@ public class TextBodyPatternTest {
 
         MatchField result = pattern.matches(request);
 
-        assertEquals(FieldType.BODY, result.getFieldType());
-        assertEquals(MatchType.MATCH_FAILURE, result.getMatchType());
+        Assert.assertEquals(FieldType.BODY, result.getFieldType());
+        Assert.assertEquals(MatchType.MATCH_FAILURE, result.getMatchType());
     }
 
     @Test
     public void testInvalidContentType() throws Exception {
         request.setHeader("Content-Type", "application/json");
-        
+
         assertRequestDoesNotMatch("foo");
     }
 
@@ -56,10 +55,9 @@ public class TextBodyPatternTest {
     public void testNoMatch() throws Exception {
         assertRequestDoesNotMatch("b..");
     }
-    
+
     @Test
     public void testEquals() {
-        assertEquals(new TextBodyPattern("foo.*"), new TextBodyPattern("foo.*"));
+        Assert.assertEquals(new TextBodyPattern("foo.*"), new TextBodyPattern("foo.*"));
     }
-    
 }

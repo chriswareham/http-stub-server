@@ -52,7 +52,7 @@ public class MatchField {
         this.actualValue = actualValue;
         return this;
     }
-    
+
     public MatchField asMatchFailure(Object actualValue, String message) {
         this.matchType = MatchType.MATCH_FAILURE;
         this.actualValue = actualValue;
@@ -74,7 +74,7 @@ public class MatchField {
             case BODY:
                 return 1; // if found but didn't match
             default:
-                throw new RuntimeException(); // impossible
+                throw new IllegalStateException(); // impossible
             }
         case MATCH:
             switch (fieldType) {
@@ -84,7 +84,7 @@ public class MatchField {
                 return 2;
             }
         default:
-            throw new RuntimeException(); // impossible
+            throw new IllegalStateException(); // impossible
         }
     }
 
@@ -94,32 +94,32 @@ public class MatchField {
     }
 
     @Override
-    public boolean equals(Object object) { // only used in tests
-        if (object instanceof MatchField) {
-            MatchField other = (MatchField) object;
-            if (!fieldName.equals(other.fieldName)
-                    || !fieldType.equals(other.fieldType)
-                    || !matchType.equals(other.matchType)) {
-                return false;
-            }
-            if (!EqualsUtils.safeEquals(message, other.message)) {
-                return false;
-            }
-            if (!EqualsUtils.safeEquals(normalise(expectedValue), normalise(other.expectedValue))) {
-                return false;
-            }
-            return EqualsBuilder.reflectionEquals(actualValue, other.actualValue);
-        } else {
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof MatchField)) {
             return false;
         }
-    }
-    
-    private Object normalise(Object value) {
-        if (value != null && value instanceof Pattern) {
-            return ((Pattern)value).pattern(); // compare regex string not 'Pattern' object
-        } else {
-            return value;
+        MatchField other = (MatchField) object;
+        if (!fieldName.equals(other.fieldName) || !fieldType.equals(other.fieldType) || !matchType.equals(other.matchType)) {
+            return false;
         }
+        if (!EqualsUtils.equals(message, other.message)) {
+            return false;
+        }
+        if (!EqualsUtils.equals(normalise(expectedValue), normalise(other.expectedValue))) {
+            return false;
+        }
+        return EqualsBuilder.reflectionEquals(actualValue, other.actualValue);
+    }
+
+    private Object normalise(final Object value) {
+        if (value != null && value instanceof Pattern) {
+            // compare regex string not 'Pattern' object
+            return ((Pattern) value).pattern();
+        }
+        return value;
     }
 
     public FieldType getFieldType() {
@@ -145,5 +145,4 @@ public class MatchField {
     public String getMessage() {
         return message;
     }
-
 }

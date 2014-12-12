@@ -4,7 +4,7 @@ public abstract class JsonMessage {
 
     public JsonPairList headers;
     public Object body;
-    
+
     public void setHeader(String name, String value) {
         if (headers == null) {
             headers = new JsonPairList();
@@ -18,5 +18,5 @@ public abstract class JsonMessage {
         }
         headers.add(name, value);
     }
-    
+
 }

@@ -20,7 +20,7 @@ public class StubMessageTest {
             return items;
         }
     }
-    
+
     private TestBean testBean;
     private List<StubParam> headers;
     private StubMessage message;
@@ -30,19 +30,19 @@ public class StubMessageTest {
         headers = new ArrayList<StubParam>();
         headers.add(new StubParam("Content-Type", "text/plain"));
         headers.add(new StubParam("Content-Type", "application/json"));
-        
+
         testBean = new TestBean();
         testBean.getItems().add("one");
-        
+
         message = new StubMessage() { };
         message.setBody(testBean);
         message.setHeaders(headers);
     }
-        
+
     @Test
     public void testCopyConstructor() {
         StubMessage copy = new StubMessage(message) { };
-        
+
         assertEquals("one", ((TestBean)copy.getBody()).getItems().get(0));
         assertEquals("Content-Type", copy.getHeaders().get(0).getName());
         assertEquals("text/plain", copy.getHeaders().get(0).getValue());
@@ -50,25 +50,25 @@ public class StubMessageTest {
         assertTrue(copy.getHeaders() != headers); // assert deep copy
         assertTrue(copy.getBody() != testBean);
     }
-    
+
     @Test
     public void testGetHeaderFirst() {
         assertEquals("text/plain", message.getHeader("content-type")); // ensure case-insensitive
     }
-    
+
     @Test
     public void testGetHeaders() {
         assertEquals(
                 Arrays.asList("text/plain", "application/json"),
                 message.getHeaders("content-type")); // ensure case-insensitive
     }
-    
+
     @Test
     public void testRemoteHeader() {
-        message.removeHeader("content-type"); // ensure case-insensitive
+        message.removeHeaders("content-type"); // ensure case-insensitive
         assertTrue(message.getHeaders("content-type").isEmpty());
     }
-    
+
     @Test
     public void testJsonSerialize() {
         // TODO: assert Jackson serializes/deserializes correctly

@@ -14,7 +14,7 @@ import play.mvc.Controller;
 public class Main extends Controller {
 
     private static final Logger LOGGER = Logger.getLogger(Main.class);
-    
+
     public static void index() {
         //List<StubbedResponse> responses = GenericStubController.RESPONSES;
         //render(responses); // ensure template parameter name is consistent

@@ -1,5 +1,8 @@
 package au.com.sensis.stubby.js;
 
+import au.com.sensis.stubby.script.Script;
+import au.com.sensis.stubby.script.ScriptWorld;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 

@@ -4,20 +4,29 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * This class provides utilities for reading the contents of files to strings.
  */
 public final class FileUtils {
+    public static final String ENCODING = "UTF-8";
+    public static final int BUFSIZ = 8192;
+
     /**
      * Read the contents of a file to a string.
      *
      * @param path the path of the file to read the contents of
      * @return the contents of the file
-     * @throws RuntimeException if the file cannot be read
      */
-    public static String read(String path) throws RuntimeException {
-        return read(new File(path));
+    public static String read(String path) {
+        try {
+            return readInternal(new FileInputStream(path));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read " + path, e);
+        }
     }
 
     /**
@@ -25,28 +34,26 @@ public final class FileUtils {
      *
      * @param file the file to read the contents of
      * @return the contents of the file
-     * @throws RuntimeException if the file cannot be read
      */
-    public static String read(File file) throws RuntimeException {
-        FileInputStream in = null;
+    public static String read(final File file) {
         try {
-            if (file.length() > Integer.MAX_VALUE) {
-                throw new IOException("File too large");
-            }
-            in = new FileInputStream(file);
-            byte[] b = new byte[(int) file.length()];
-            for (int count = 0; count < b.length;) {
-                int n = in.read(b, count, b.length - count);
-                if (n == -1) {
-                    break;
-                }
-                count += n;
-            }
-            return new String(b , "UTF-8");
+            return readInternal(new FileInputStream(file));
         } catch (IOException e) {
             throw new RuntimeException("Failed to read " + file.getName(), e);
-        } finally {
-            close(in);
+        }
+    }
+
+    /**
+     * Read the contents of an input stream to a string.
+     *
+     * @param inputStream the input stream to read the contents of
+     * @return the contents of the input stream
+     */
+    public static String read(final InputStream inputStream) {
+        try {
+            return readInternal(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read input stream", e);
         }
     }
 
@@ -63,6 +70,20 @@ public final class FileUtils {
                 // ignored
             }
         }
+    }
+
+    private static String readInternal(final InputStream inputStream) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        Reader in = new InputStreamReader(inputStream, ENCODING);
+        char[] buf = new char[BUFSIZ];
+        try {
+            for (int n = in.read(buf, 0, BUFSIZ); n != -1; n = in.read(buf, 0, BUFSIZ)) {
+                sb.append(buf, 0, n);
+            }
+        } finally {
+            close(in);
+        }
+        return sb.toString();
     }
 
     /**

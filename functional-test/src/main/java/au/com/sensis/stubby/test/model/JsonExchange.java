@@ -8,7 +8,7 @@ public class JsonExchange {
     public JsonResponse response;
     public Long delay;
     public String script;
-    
+
     @JsonIgnore
     public JsonRequest request() {
         if (request == null) {
@@ -16,7 +16,7 @@ public class JsonExchange {
         }
         return request;
     }
-    
+
     @JsonIgnore
     public JsonResponse response() {
         if (response == null) {
@@ -24,5 +24,5 @@ public class JsonExchange {
         }
         return response;
     }
-    
+
 }

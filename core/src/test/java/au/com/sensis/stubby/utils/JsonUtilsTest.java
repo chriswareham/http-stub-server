@@ -11,7 +11,7 @@ import org.junit.Test;
 public class JsonUtilsTest {
 
     private static final String JSON = "{\"foo\":\"bar\"}";
-    
+
     public static class TestBean {
 
         private String foo;
@@ -38,7 +38,7 @@ public class JsonUtilsTest {
     public void testPrettyPrint() {
         assertEquals("{\n  \"foo\" : \"bar\"\n}", JsonUtils.prettyPrint(bean));
     }
-    
+
     @Test
     public void testSerializeString() {
         assertEquals(JSON, JsonUtils.serialize(bean));
@@ -50,7 +50,7 @@ public class JsonUtilsTest {
         JsonUtils.serialize(stream, bean);
         assertEquals(JSON, stream.toString());
     }
-    
+
     @Test
     public void testDeserializeString() {
         assertEquals("bar", JsonUtils.deserialize(JSON, TestBean.class).getFoo());
@@ -61,5 +61,5 @@ public class JsonUtilsTest {
         ByteArrayInputStream stream = new ByteArrayInputStream(JSON.getBytes());
         assertEquals("bar", JsonUtils.deserialize(stream, TestBean.class).getFoo());
     }
-    
+
 }

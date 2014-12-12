@@ -5,7 +5,7 @@ public class JsonRequest extends JsonMessage {
     public String method;
     public String path;
     public JsonPairList params;
-    
+
     public void setParam(String name, String value) {
         if (params == null) {
             params = new JsonPairList();
@@ -19,5 +19,5 @@ public class JsonRequest extends JsonMessage {
         }
         params.add(name, value);
     }
-    
+
 }

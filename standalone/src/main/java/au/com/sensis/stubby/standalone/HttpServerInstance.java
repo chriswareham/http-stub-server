@@ -9,7 +9,7 @@ public class HttpServerInstance extends ServerInstance {
 
     private HttpServer server;
 
-    public HttpServerInstance(int port, ServerHandler handler, Executor executor) throws IOException {
+    public HttpServerInstance(final int port, final ServerHandler handler, final Executor executor) throws IOException {
         this.server = HttpServer.create(allInterfaces(port), SOCKET_BACKLOG);
         this.server.createContext("/", handler);
         this.server.setExecutor(executor);

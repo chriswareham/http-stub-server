@@ -6,5 +6,5 @@ public class JsonStubbedExchange {
 
     public JsonExchange exchange;
     public List<Object> attempts; // TODO: lock-down the format of this...
-    
+
 }

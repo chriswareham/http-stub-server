@@ -26,7 +26,7 @@ public class DuplicateRequestPatternTest extends TestBase {
             status++;
         }
     }
-    
+
     private void assertNotSame(MessageBuilder... messages) {
         int status = 1; // use status code to identify requests
         for (MessageBuilder message : messages) {
@@ -46,21 +46,21 @@ public class DuplicateRequestPatternTest extends TestBase {
                 builder().setRequestPath("/foo"),
                 builder().setRequestPath("/foo"));
     }
-    
+
     @Test
     public void pathDiffers() {
         assertNotSame(
                 builder().setRequestPath("/foo1"),
                 builder().setRequestPath("/foo2"));
     }
-    
+
     @Test
     public void querySame() {
         assertSame(
                 builder().setRequestPath("/foo").addRequestParam("foo", "bar"),
                 builder().setRequestPath("/foo").addRequestParam("foo", "bar"));
-    }    
-    
+    }
+
     @Test
     public void queryDiffers() {
         assertNotSame(

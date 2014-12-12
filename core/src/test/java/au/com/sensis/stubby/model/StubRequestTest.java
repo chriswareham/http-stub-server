@@ -16,7 +16,7 @@ public class StubRequestTest {
 
     @SuppressWarnings("serial")
     public static class TestBean implements Serializable { }
-    
+
     private TestBean body;
     private List<StubParam> params;
     private StubRequest request;
@@ -24,11 +24,11 @@ public class StubRequestTest {
     @Before
     public void before() {
         body = new TestBean();
-        
+
         params = new ArrayList<StubParam>();
         params.add(new StubParam("foo", "bar1"));
         params.add(new StubParam("foo", "bar2"));
-        
+
         request = new StubRequest();
         request.setParams(params);
         request.setMethod("GET");
@@ -39,16 +39,16 @@ public class StubRequestTest {
     @Test
     public void testCopyConstructor() {
         StubRequest copy = new StubRequest(request);
-        
+
         assertEquals("GET", copy.getMethod());
         assertEquals("/request/path", copy.getPath());
         assertEquals("foo", copy.getParams().get(0).getName());
         assertEquals("bar1", copy.getParams().get(0).getValue());
-        
+
         assertTrue(copy.getParams() != params); // assert deep copy
 
         assertTrue(copy.getBody() != null); // assert calls parent constructor
-        assertTrue(copy.getBody() != body); 
+        assertTrue(copy.getBody() != body);
     }
 
     @Test
@@ -57,22 +57,22 @@ public class StubRequestTest {
                 Arrays.asList("bar1", "bar2"),
                 request.getParams("foo"));
     }
-    
+
     @Test
     public void getGetParamsNotFound() {
         assertEquals(Arrays.asList(), request.getParams("FOO")); // ensure case-sensitive
     }
-    
+
     @Test
     public void testGetParamFound() {
         assertEquals("bar1", request.getParam("foo"));
     }
-    
+
     @Test
     public void getGetParamNotFound() {
         assertNull(request.getParam("FOO")); // ensure case-sensitive
     }
-    
+
     @Test
     public void testJsonSerialize() {
         // TODO: assert Jackson serializes/deserializes correctly

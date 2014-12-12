@@ -18,12 +18,12 @@ import au.com.sensis.stubby.utils.UriUtils;
 public class GenericStubController extends Controller {
 
     private static final Logger LOGGER = Logger.getLogger(GenericStubController.class);
-       
+
     public static LinkedList<StubbedResponse> RESPONSES = new LinkedList<StubbedResponse>();
     public static LinkedList<HttpMessage> REQUESTS = new LinkedList<HttpMessage>();
-    
+
     private static ObjectMapper JSON = new ObjectMapper();
-    
+
     public static synchronized void match() throws Exception {
         HttpMessage lastRequest = Transformer.fromPlayRequest(request);
         REQUESTS.addFirst(lastRequest);
@@ -55,9 +55,9 @@ public class GenericStubController extends Controller {
             renderJSON(JSON.writeValueAsString(REQUESTS.get(index)));
         } catch (IndexOutOfBoundsException e) {
             notFound("No last request for index " + index);
-        }   
+        }
     }
-    
+
     public static synchronized void reset() {
         REQUESTS.clear();
         RESPONSES.clear();

@@ -11,17 +11,17 @@ public class MessageBuilder {
         this.client = client;
         this.exchange = new JsonExchange();
     }
- 
+
     public MessageBuilder setDelay(Long delay) {
         exchange.delay = delay;
         return this;
     }
-    
+
     public MessageBuilder setScript(String script) {
         exchange.script = script;
         return this;
     }
-    
+
     public MessageBuilder setRequestMethod(String method) {
         exchange.request().method = method;
         return this;
@@ -41,7 +41,7 @@ public class MessageBuilder {
         exchange.response().body = body;
         return this;
     }
-    
+
     public MessageBuilder setRequestBody(Object body) {
         exchange.request().body = body;
         return this;
@@ -78,7 +78,7 @@ public class MessageBuilder {
     }
 
     public MessageBuilder stub() {
-        client.postMessage(exchange); 
+        client.postMessage(exchange);
         return this;
     }
 

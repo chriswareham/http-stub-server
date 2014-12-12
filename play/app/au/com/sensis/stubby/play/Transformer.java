@@ -32,7 +32,7 @@ public class Transformer {
         }
         return result;
     }
-    
+
     public static List<HttpParam> fromPlayParams(Scope.Params params) {
         List<HttpParam> result = new ArrayList<HttpParam>();
         for (Map.Entry<String,String[]> entry : params.all().entrySet()) {
@@ -79,7 +79,7 @@ public class Transformer {
         if (message.body instanceof String) {
             response.print(message.body);
         } else {
-            response.print(new ObjectMapper().writeValueAsString(message.body)); // assume deserialised JSON (ie, a Map) 
+            response.print(new ObjectMapper().writeValueAsString(message.body)); // assume deserialised JSON (ie, a Map)
         }
         for (HttpHeader header : message.headers.values()) {
             for (String value : header.values) {

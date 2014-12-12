@@ -1,4 +1,4 @@
-package au.com.sensis.stubby.js;
+package au.com.sensis.stubby.script;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -10,12 +10,12 @@ public class Script {
 
     private String source;
 
-    public Script(final String source) {
-        this.source = source;
-    }
-
     public String getSource() {
         return source;
+    }
+
+    public Script(final String source) {
+        this.source = source;
     }
 
     private ScriptEngine createEngine(final String scriptType) {

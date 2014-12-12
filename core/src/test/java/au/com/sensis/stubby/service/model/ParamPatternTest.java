@@ -28,13 +28,13 @@ public class ParamPatternTest {
     public void testHashCode() {
         assertEquals(instance1.hashCode(), instance2.hashCode());
     }
-    
+
     @Test
     public void testCopyConstructor() {
         instance2 = new ParamPattern(instance1);
-        
+
         assertEquals(instance1, instance2);
         assertTrue(instance1 != instance2); // ensure copied
     }
-    
+
 }

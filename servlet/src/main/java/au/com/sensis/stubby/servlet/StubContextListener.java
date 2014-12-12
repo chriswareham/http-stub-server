@@ -5,46 +5,51 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import au.com.sensis.stubby.service.StubService;
+import au.com.sensis.stubby.service.StubServiceImpl;
 
 /**
- * This class is a context listener that initialises and destroys the stub server.
+ * This class provides a context listener that adds and removes the stub server.
  */
 public class StubContextListener implements ServletContextListener {
     /**
-     * The name of the initialisation parameter that holds the exchange filename.
+     * The name of the initialisation parameter that holds the name of the file
+     * to load a list of stubbed exchanges from.
      */
-    private static final String RESPONSES_INIT_PARAMETER = "responses";
+    public static final String RESPONSES_INIT_PARAMETER = "responses";
+    /**
+     * The name of the attribute holding the stub service.
+     */
+    public static final String STUB_SERVICE_ATTRIBUTE = "stubService";
 
     /**
-     * Initialise the stub server.
+     * Add the stub server to servlet context.
      *
      * @param event the servlet context event
      */
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        StubService stubService = new StubService();
-
         ServletContext context = event.getServletContext();
-        context.setAttribute(AbstractStubServlet.SERVICE_CONTEXT_KEY, stubService);
 
         ServletContextResourceResolver resolver = new ServletContextResourceResolver();
         resolver.setServletContext(context);
 
+        StubService stubService = new StubServiceImpl(resolver);
+        context.setAttribute(STUB_SERVICE_ATTRIBUTE, stubService);
+
         String filename = context.getInitParameter(RESPONSES_INIT_PARAMETER);
         if (filename != null) {
-            stubService.loadResponses(resolver, filename);
+            stubService.loadStubbedExchanges(filename);
         }
     }
 
     /**
-     * Destroy the stub server.
+     * Remove the stub server from the servlet content.
      *
      * @param event the servlet context event
      */
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
         ServletContext context = event.getServletContext();
-        context.removeAttribute(AbstractStubServlet.SERVICE_CONTEXT_KEY);
-        context.removeAttribute(RESPONSES_INIT_PARAMETER);
+        context.removeAttribute(STUB_SERVICE_ATTRIBUTE);
     }
 }

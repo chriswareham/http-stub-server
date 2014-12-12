@@ -18,6 +18,7 @@ import au.com.sensis.stubby.model.StubRequest;
 import au.com.sensis.stubby.service.JsonServiceInterface;
 import au.com.sensis.stubby.service.NotFoundException;
 import au.com.sensis.stubby.service.StubService;
+import au.com.sensis.stubby.service.StubServiceImpl;
 import au.com.sensis.stubby.service.model.StubServiceResult;
 import au.com.sensis.stubby.utils.FileSystemResourceResolver;
 import au.com.sensis.stubby.utils.JsonUtils;
@@ -35,20 +36,20 @@ public class ServerHandler implements HttpHandler {
     private Thread shutdownHook; // if set, use for graceful shutdown
 
     public ServerHandler() {
-        service = new StubService();
+        service = new StubServiceImpl(RESOLVER);
         jsonService = new JsonServiceInterface(service);
     }
 
-    public void loadResponses(String filename) {
-        service.loadResponses(RESOLVER, filename);
+    public void loadResponses(final String filename) {
+        service.loadStubbedExchanges(filename);
     }
 
-    public void setShutdownHook(Thread shutdownHook) {
+    public void setShutdownHook(final Thread shutdownHook) {
         this.shutdownHook = shutdownHook;
     }
 
     @Override
-    public void handle(HttpExchange exchange) {
+    public void handle(final HttpExchange exchange) {
         long start = 0L;
         if (LOGGER.isTraceEnabled()) {
             start = System.currentTimeMillis();
@@ -80,7 +81,7 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void handleMatch(HttpExchange exchange) throws Exception {
+    private void handleMatch(final HttpExchange exchange) throws Exception {
         StubServiceResult result = service.findMatch(Transformer.fromExchange(exchange));
         if (result.matchFound()) {
             Long delay = result.getDelay();
@@ -96,7 +97,7 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void handleControl(HttpExchange exchange) throws IOException {
+    private void handleControl(final HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         Matcher matcher = CONTROL_PATTERN.matcher(path);
         if (matcher.matches()) {
@@ -127,31 +128,31 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void returnOk(HttpExchange exchange) throws IOException {
+    private void returnOk(final HttpExchange exchange) throws IOException {
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, -1); // no body
         exchange.getResponseBody().close();
     }
 
-    private void returnNotFound(HttpExchange exchange, String message) throws IOException {
+    private void returnNotFound(final HttpExchange exchange, final String message) throws IOException {
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0); // unknown body length
         exchange.getResponseBody().write(message.getBytes());
         exchange.getResponseBody().close();
     }
 
-    private void returnError(HttpExchange exchange, String message) throws IOException {
+    private void returnError(final HttpExchange exchange, final String message) throws IOException {
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0); // unknown body length
         exchange.getResponseBody().write(message.getBytes());
         exchange.getResponseBody().close();
     }
 
-    private void returnJson(HttpExchange exchange, Object model) throws IOException {
+    private void returnJson(final HttpExchange exchange, final Object model) throws IOException {
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0); // unknown body length
         JsonUtils.serialize(exchange.getResponseBody(), model);
         exchange.getResponseBody().close();
     }
 
-    private void handleResponses(HttpExchange exchange) throws IOException {
+    private void handleResponses(final HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         if ("POST".equals(method)) {
             jsonService.addResponse(exchange.getRequestBody());
@@ -166,7 +167,7 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void handleResponse(HttpExchange exchange, int index) throws IOException {
+    private void handleResponse(final HttpExchange exchange, final int index) throws IOException {
         String method = exchange.getRequestMethod();
         if ("GET".equals(method)) {
             try {
@@ -179,7 +180,7 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void handleRequests(HttpExchange exchange) throws IOException {
+    private void handleRequests(final HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         if ("DELETE".equals(method)) {
             service.deleteRequests();
@@ -198,7 +199,7 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void handleRequest(HttpExchange exchange, int index) throws IOException {
+    private void handleRequest(final HttpExchange exchange, final int index) throws IOException {
         String method = exchange.getRequestMethod();
         if ("GET".equals(method)) {
             try {
@@ -211,11 +212,11 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private StubRequest createFilter(List<StubParam> params) {
+    private StubRequest createFilter(final List<StubParam> params) {
         return new RequestFilterBuilder().fromParams(params).getFilter();
     }
 
-    private Long getWaitParam(List<StubParam> params) {
+    private Long getWaitParam(final List<StubParam> params) {
         for (StubParam param : params) {
             if ("wait".equals(param.getName())) {
                 return Long.parseLong(param.getValue());
@@ -224,7 +225,7 @@ public class ServerHandler implements HttpHandler {
         return null; // not found
     }
 
-    private void handleShutdown(HttpExchange exchange) throws IOException {
+    private void handleShutdown(final HttpExchange exchange) throws IOException {
         if (shutdownHook != null) {
             LOGGER.info("Received shutdown request, attempting to shutdown gracefully...");
             returnOk(exchange);
@@ -235,7 +236,7 @@ public class ServerHandler implements HttpHandler {
         }
     }
 
-    private void handleVersion(HttpExchange exchange) throws IOException {
+    private void handleVersion(final HttpExchange exchange) throws IOException {
         InputStream stream = getClass().getResourceAsStream("/au/com/sensis/stubby/standalone/version.properties");
         try {
             Properties props = new Properties();

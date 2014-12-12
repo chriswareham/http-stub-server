@@ -9,13 +9,13 @@ import au.com.sensis.stubby.utils.HttpMessageUtils;
 import au.com.sensis.stubby.utils.JsonUtils;
 
 public class JsonBodyPattern extends BodyPattern {
-    
+
     public static class MatchResult { // internal match result type
-        
+
         private boolean match;
         private String path;
         private String reason;
-        
+
         public MatchResult(boolean match, String path, String reason) {
             this.match = match;
             this.path = path;
@@ -29,15 +29,15 @@ public class JsonBodyPattern extends BodyPattern {
         public String getPath() {
             return path;
         }
-        
+
         public String getReason() {
             return reason;
-        }        
-        
+        }
+
         public String message() {
             return String.format("%s (at '%s')", reason, path);
         }
-        
+
     }
 
     private Object pattern;
@@ -45,11 +45,11 @@ public class JsonBodyPattern extends BodyPattern {
     public JsonBodyPattern(Object pattern) {
         this.pattern = pattern;
     }
-    
+
     public Object getPattern() {
         return pattern;
     }
-    
+
     @Override
     public MatchField matches(StubMessage request) {
         String expected = JsonUtils.prettyPrint(pattern);
@@ -77,10 +77,10 @@ public class JsonBodyPattern extends BodyPattern {
     }
 
     /*
-     * For each property in the pattern object, a property in the request must exist with exactly the 
+     * For each property in the pattern object, a property in the request must exist with exactly the
      * same name and it's value must match (see 'matchValue()' for value matching rules). Properties
      * in the request object that are not in the pattern are ignored.
-     * 
+     *
      * An empty object pattern matches any request object.
      */
     private MatchResult matchObject(Map<String, Object> pattern, Map<String, Object> request, String path) {
@@ -94,10 +94,10 @@ public class JsonBodyPattern extends BodyPattern {
     }
 
     /*
-     * Arrays does not have to match exactly, but the pattern order is important. 
+     * Arrays does not have to match exactly, but the pattern order is important.
      * For example, pattern [b,d] matches [a,b,c,d] because 'b' and 'd' exist and 'b' appears before 'd'.
      * (see 'matchValue()' for value matching rules)
-     * 
+     *
      * An empty array pattern matches any request array.
      */
     private MatchResult matchArray(List<Object> pattern, List<Object> request, String path) {
@@ -117,22 +117,22 @@ public class JsonBodyPattern extends BodyPattern {
     /*
      * Matching rules:
      *  - A null value in a pattern only matches a null or missing request value
-     *  
-     *  - A string value in a pattern is treated as a regular expression and can match strings, 
-     *    booleans and numbers in the request (they are first converted to strings). 
-     *  
+     *
+     *  - A string value in a pattern is treated as a regular expression and can match strings,
+     *    booleans and numbers in the request (they are first converted to strings).
+     *
      *  - A number value in a pattern can only match numbers in the request and must match exactly.
-     *  
+     *
      *  - A boolean value in a pattern can only match boolean in the request and must match exactly.
-     *  
+     *
      *  - An array in a pattern can only match an array in the request. See 'matchArray()' for more detail.
-     *    
+     *
      *  - An object in the pattern can only match an object in the request. See 'matchObject()' for more detail.
      */
     @SuppressWarnings("unchecked")
     private MatchResult matchValue(Object pattern, Object request, String path) { // TODO: add better debugging information
         if (pattern == null) {
-            if (request == null) { 
+            if (request == null) {
                 return matchSuccess(); // only match if both are null
             } else {
                 return matchFailure("Expected null value", path);
@@ -185,11 +185,11 @@ public class JsonBodyPattern extends BodyPattern {
             throw new RuntimeException("Unexpected type in pattern: " + pattern.getClass());
         }
     }
-        
+
     private MatchResult matchFailure(String reason, String path) {
         return new MatchResult(false, path, reason);
     }
-    
+
     private MatchResult matchSuccess() {
         return new MatchResult(true, null, null); // message & path ignored for success
     }
@@ -199,7 +199,7 @@ public class JsonBodyPattern extends BodyPattern {
         return (obj instanceof JsonBodyPattern)
                 && ((JsonBodyPattern) obj).pattern.equals(pattern);
     }
-    
+
     @Override
     public int hashCode() {
         return pattern.hashCode();

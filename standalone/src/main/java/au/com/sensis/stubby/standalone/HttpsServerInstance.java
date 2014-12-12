@@ -15,7 +15,7 @@ public class HttpsServerInstance extends ServerInstance {
 
     private static final Logger LOGGER = Logger.getLogger(HttpsServerInstance.class);
 
-    private static final void checkConfig() {
+    private static void checkConfig() {
         String[] properties = { // also see 'javax.net.debug' for debugging
             "javax.net.ssl.keyStore",
             "javax.net.ssl.keyStorePassword"
@@ -30,7 +30,7 @@ public class HttpsServerInstance extends ServerInstance {
 
     private HttpsServer server;
 
-    public HttpsServerInstance(int port, ServerHandler handler, Executor executor) throws IOException, NoSuchAlgorithmException {
+    public HttpsServerInstance(final int port, final ServerHandler handler, final Executor executor) throws IOException, NoSuchAlgorithmException {
         checkConfig();
         this.server = HttpsServer.create(allInterfaces(port), SOCKET_BACKLOG);
         this.server.setHttpsConfigurator(new HttpsConfigurator(SSLContext.getDefault()));

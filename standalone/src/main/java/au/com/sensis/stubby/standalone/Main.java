@@ -16,7 +16,8 @@ public class Main {
 
     private static final int NUM_WORKER_THREADS = 10;
 
-    public static void main(String[] args) throws Exception {
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    public static void main(final String[] args) throws Exception {
         int port = 0;
         int sslPort = 0;
         String responses = null;
@@ -63,6 +64,7 @@ public class Main {
         }
 
         Thread shutdownHook = new Thread() {
+            @Override
             public void run() {
                 LOGGER.info("Stopping servers...");
                 try {

@@ -4,19 +4,28 @@ public class StubResponse extends StubMessage {
 
     private Integer status;
 
-    public StubResponse() { }
-    
-    public StubResponse(StubResponse other) { // copy constructor
-        super(other);
-        this.status = other.status;
+    /**
+     * Default constructor.
+     */
+    public StubResponse() {
+        super();
     }
-    
+
+    /**
+     * Copy constructor.
+     *
+     * @param response the response to copy
+     */
+    public StubResponse(final StubResponse response) {
+        super(response);
+        this.status = response.status;
+    }
+
     public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(final Integer status) {
         this.status = status;
     }
-
 }

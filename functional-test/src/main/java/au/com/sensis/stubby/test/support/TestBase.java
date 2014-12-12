@@ -79,7 +79,7 @@ public abstract class TestBase {
     protected void assertOk(GenericClientResponse response) {
         assertStatus(HttpStatus.SC_OK, response);
     }
-    
+
     protected void assertNotFound(GenericClientResponse response) {
         assertStatus(HttpStatus.SC_NOT_FOUND, response);
     }
@@ -91,7 +91,7 @@ public abstract class TestBase {
     protected MessageBuilder builder() {
         return new MessageBuilder(client);
     }
-        
+
     protected void assertHasHeader(JsonMessage request, String name, String value) {
         for (JsonPair header : request.headers) {
             if (header.name.equalsIgnoreCase(name)
@@ -101,11 +101,11 @@ public abstract class TestBase {
         }
         fail();
     }
-    
+
     protected void assumeNotTravisCi() {
         assumeFalse("Running as Travis CI", isTravisCi());
     }
-    
+
     protected boolean isTravisCi() { // set when running under Travis CI (travis-ci.org)
         return "true".equals(System.getenv("TRAVIS"));
     }

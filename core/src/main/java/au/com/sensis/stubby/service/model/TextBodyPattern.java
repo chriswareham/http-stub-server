@@ -9,7 +9,7 @@ import au.com.sensis.stubby.utils.HttpMessageUtils;
 public class TextBodyPattern extends BodyPattern {
 
     private Pattern pattern;
-    
+
     public TextBodyPattern(String pattern) {
         this.pattern = Pattern.compile(pattern);
     }
@@ -25,7 +25,7 @@ public class TextBodyPattern extends BodyPattern {
                 return field.asMatchFailure(actual);
             }
         } else {
-            return field.asMatchFailure(actual, "Expected content type: text/*"); 
+            return field.asMatchFailure(actual, "Expected content type: text/*");
         }
     }
 
@@ -34,7 +34,7 @@ public class TextBodyPattern extends BodyPattern {
         return (obj instanceof TextBodyPattern)
                 && ((TextBodyPattern)obj).pattern.pattern().equals(pattern.pattern());
     }
-    
+
     @Override
     public int hashCode() {
         return pattern.pattern().hashCode();

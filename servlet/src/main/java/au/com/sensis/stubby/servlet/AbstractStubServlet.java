@@ -21,12 +21,10 @@ import au.com.sensis.stubby.utils.JsonUtils;
 @SuppressWarnings("serial")
 public abstract class AbstractStubServlet extends HttpServlet {
 
-    public static final String SERVICE_CONTEXT_KEY = "stubby.StubService";
-
     private ObjectMapper mapper = JsonUtils.defaultMapper();
 
     protected StubService service() {
-        StubService service = (StubService) getServletContext().getAttribute(SERVICE_CONTEXT_KEY);
+        StubService service = (StubService) getServletContext().getAttribute(StubContextListener.STUB_SERVICE_ATTRIBUTE);
         if (service == null) {
             throw new IllegalStateException("Service not created");
         }

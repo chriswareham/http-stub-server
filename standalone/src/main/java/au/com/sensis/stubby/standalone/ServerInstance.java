@@ -8,7 +8,7 @@ public abstract class ServerInstance {
 
     public static final int SOCKET_BACKLOG = 10;
 
-    protected static InetSocketAddress allInterfaces(int port) {
+    protected static InetSocketAddress allInterfaces(final int port) {
         return new InetSocketAddress(port);
     }
 

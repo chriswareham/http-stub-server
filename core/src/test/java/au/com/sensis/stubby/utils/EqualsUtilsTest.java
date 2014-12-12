@@ -9,11 +9,11 @@ public class EqualsUtilsTest {
 
     @Test
     public void testSafeEquals() {
-        assertTrue(EqualsUtils.safeEquals(null, null));
-        assertTrue(EqualsUtils.safeEquals("foo", "foo"));
-        assertFalse(EqualsUtils.safeEquals("foo", null));
-        assertFalse(EqualsUtils.safeEquals(null, "foo"));
-        assertFalse(EqualsUtils.safeEquals("foo", "bar"));
+        assertTrue(EqualsUtils.equals(null, null));
+        assertTrue(EqualsUtils.equals("foo", "foo"));
+        assertFalse(EqualsUtils.equals("foo", null));
+        assertFalse(EqualsUtils.equals(null, "foo"));
+        assertFalse(EqualsUtils.equals("foo", "bar"));
     }
-    
+
 }

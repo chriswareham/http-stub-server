@@ -16,6 +16,7 @@ import au.com.sensis.stubby.model.StubRequest;
 import au.com.sensis.stubby.model.StubResponse;
 import au.com.sensis.stubby.service.model.StubServiceExchange;
 import au.com.sensis.stubby.service.model.StubServiceResult;
+import au.com.sensis.stubby.utils.ClassPathResourceResolver;
 
 public class StubServiceTest {
 
@@ -29,7 +30,7 @@ public class StubServiceTest {
 
     @Before
     public void before() {
-        service = new StubService();
+        service = new StubServiceImpl(new ClassPathResourceResolver());
 
         request = new StubRequest();
 
@@ -56,11 +57,11 @@ public class StubServiceTest {
     private void givenDefaultService() {
         exchange.getResponse().setStatus(OK);
         exchange.getRequest().setMethod("G.T");
-        service.addResponse(new StubExchange(exchange)); // create copy
+        service.addStubbedExchange(new StubExchange(exchange)); // create copy
 
         exchange.getResponse().setStatus(CREATED);
         exchange.getRequest().setMethod("GE."); // make sure patterns differ (or they will overwrite eachother)
-        service.addResponse(new StubExchange(exchange));
+        service.addStubbedExchange(new StubExchange(exchange));
 
         assertEquals(2, service.getResponses().size());
     }
@@ -73,7 +74,7 @@ public class StubServiceTest {
         assertEquals(CREATED, result.getResponse().getStatus()); // most recent stubbed first
         assertEquals(1, result.getAttempts().size()); // ensure attempts returned
     }
-    
+
     @Test
     public void testAttemptRecorded() {
         service.findMatch(request);
@@ -85,7 +86,7 @@ public class StubServiceTest {
 
     @Test
     public void testNoMatch() {
-        service.addResponse(exchange);
+        service.addStubbedExchange(exchange);
         request.setPath("/not/found");
 
         assertFalse(service.getResponses().isEmpty());
@@ -130,7 +131,7 @@ public class StubServiceTest {
     @Test
     public void testDelay() {
         exchange.setDelay(1234L);
-        service.addResponse(exchange);
+        service.addStubbedExchange(exchange);
 
         StubServiceResult result = service.findMatch(request);
 
@@ -141,7 +142,7 @@ public class StubServiceTest {
     @Test
     public void testScriptExecuted() {
         exchange.setScript("exchange.response.status = 500; exchange.delay = 666; exchange.response.body = exchange.request.path");
-        service.addResponse(exchange);
+        service.addStubbedExchange(exchange);
 
         StubServiceResult result = service.findMatch(request);
 
@@ -156,34 +157,34 @@ public class StubServiceTest {
         service.deleteResponses();
 
         exchange.getResponse().setStatus(OK);
-        service.addResponse(new StubExchange(exchange)); // create copies
+        service.addStubbedExchange(new StubExchange(exchange)); // create copies
 
         exchange.getResponse().setStatus(CREATED);
-        service.addResponse(new StubExchange(exchange));
+        service.addStubbedExchange(new StubExchange(exchange));
 
         assertEquals(1, service.getResponses().size());
         assertEquals(CREATED, // ensure last stubbed request is kept
                 service.getResponses().get(0).getExchange().getResponse().getStatus());
     }
-    
+
     @Test
     public void testRequestFilterEmpty() {
         request.setPath("/test");
         service.findMatch(new StubRequest(request));
         assertEquals(1, service.findRequests(new StubRequest()).size()); // empty filter
     }
-    
+
     @Test
     public void testRequestFilter() {
         request.setPath("/test");
         service.findMatch(new StubRequest(request));
-        
+
         request.setPath("/test");
         request.setParams(Arrays.asList(new StubParam("foo", "bar")));
         service.findMatch(new StubRequest(request));
-        
+
         assertEquals(2, service.getRequests().size());
-        
+
         StubRequest filter = new StubRequest();
         filter.setParams(Arrays.asList(new StubParam("foo", "b.r")));
         assertEquals(1, service.findRequests(filter).size()); // should only match one of the requests

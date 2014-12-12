@@ -3,28 +3,43 @@ package au.com.sensis.stubby.model;
 public class StubExchange {
 
     private StubRequest request;
+
     private StubResponse response;
+
     private Long delay;
+
     private String scriptType;
+
     private String script;
+
     private String scriptFile;
 
-    public StubExchange() { }
+    /**
+     * Default constructor.
+     */
+    public StubExchange() {
+        super();
+    }
 
-    public StubExchange(StubExchange other) { // copy constructor
-        this.request = (other.request != null) ? new StubRequest(other.request) : null;
-        this.response = (other.response != null) ? new StubResponse(other.response) : null;
-        this.delay = other.delay;
-        this.scriptType = other.scriptType;
-        this.script = other.script;
-        this.scriptFile = other.scriptFile;
+    /**
+     * Copy constructor.
+     *
+     * @param exchange the exchange to copy
+     */
+    public StubExchange(final StubExchange exchange) {
+        request = exchange.request != null ? new StubRequest(exchange.request) : null;
+        response = exchange.response != null ? new StubResponse(exchange.response) : null;
+        delay = exchange.delay;
+        scriptType = exchange.scriptType;
+        script = exchange.script;
+        scriptFile = exchange.scriptFile;
     }
 
     public StubRequest getRequest() {
         return request;
     }
 
-    public void setRequest(StubRequest request) {
+    public void setRequest(final StubRequest request) {
         this.request = request;
     }
 
@@ -32,7 +47,7 @@ public class StubExchange {
         return response;
     }
 
-    public void setResponse(StubResponse response) {
+    public void setResponse(final StubResponse response) {
         this.response = response;
     }
 
@@ -40,7 +55,7 @@ public class StubExchange {
         return delay;
     }
 
-    public void setDelay(Long delay) {
+    public void setDelay(final Long delay) {
         this.delay = delay;
     }
 
@@ -48,7 +63,7 @@ public class StubExchange {
         return scriptType;
     }
 
-    public void setScriptType(String scriptType) {
+    public void setScriptType(final String scriptType) {
         this.scriptType = scriptType;
     }
 
@@ -56,7 +71,7 @@ public class StubExchange {
         return script;
     }
 
-    public void setScript(String script) {
+    public void setScript(final String script) {
         this.script = script;
     }
 
@@ -64,7 +79,7 @@ public class StubExchange {
         return scriptFile;
     }
 
-    public void setScriptFile(String scriptFile) {
+    public void setScriptFile(final String scriptFile) {
         this.scriptFile = scriptFile;
     }
 }

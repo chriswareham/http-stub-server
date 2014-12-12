@@ -34,7 +34,7 @@ public class Client extends GenericClient {
     public JsonRequestList findRequests(String query) {
         return executeGet("/_control/requests?" + query).assertOk().getJson(JsonRequestList.class);
     }
-    
+
     public JsonStubbedExchange getResponse(int index) {
         return executeGet("/_control/responses/" + index).assertOk().getJson(JsonStubbedExchange.class);
     }

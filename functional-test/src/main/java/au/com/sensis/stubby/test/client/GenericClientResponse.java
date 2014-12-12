@@ -40,7 +40,7 @@ public class GenericClientResponse {
     public int getStatus() {
         return response.getStatusLine().getStatusCode();
     }
-    
+
     public String getHeader(String name) {
         if (response.getFirstHeader(name) != null) {
             return response.getFirstHeader(name).getValue();
@@ -48,7 +48,7 @@ public class GenericClientResponse {
             return null;
         }
     }
-    
+
     public List<String> getHeaders(String name) {
         List<String> result = new ArrayList<String>();
         for (Header header : response.getHeaders(name)) {
@@ -63,7 +63,7 @@ public class GenericClientResponse {
         }
         return this;
     }
-    
+
     public GenericClientResponse assertBody() {
         if (!hasBody()) {
             throw new RuntimeException("Response body expected");

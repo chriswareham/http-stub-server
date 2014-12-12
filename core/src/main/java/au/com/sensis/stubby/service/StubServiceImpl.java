@@ -35,36 +35,51 @@ public class StubServiceImpl implements StubService {
      */
     private static final Logger LOGGER = Logger.getLogger(StubService.class);
 
+    /**
+     * The resource resolver.
+     */
+    private ResourceResolver resolver;
     private LinkedList<StubServiceExchange> serviceExchanges = new LinkedList<StubServiceExchange>();
     private LinkedList<StubRequest> requests = new LinkedList<StubRequest>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
+     * Constructor.
+     *
+     * @param resolver the resource resolver to use
+     */
+    public StubServiceImpl(final ResourceResolver resolver) {
+        this.resolver = resolver;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public void loadStubbedExchanges(final ResourceResolver resolver, final String filename) {
+    public void loadStubbedExchanges(final String filename) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Loading stubbed exchanges from " + filename);
         }
+
         lock.writeLock().lock();
+
         BufferedReader reader = null;
         try {
             InputStream responses = resolver.getResource(filename);
             reader = new BufferedReader(new InputStreamReader(responses));
-            for (String fn = reader.readLine(); fn != null; fn = reader.readLine()) {
-                if (!StringUtils.isBlank(fn)) {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                if (!StringUtils.isBlank(line)) {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Loading stubbed exchange from " + fn);
+                        LOGGER.debug("Loading stubbed exchange from " + line);
                     }
-                    InputStream is = resolver.getResource(fn);
-                    StubExchange exchange = JsonUtils.deserialize(is, StubExchange.class);
+                    InputStream response = resolver.getResource(line);
+                    StubExchange exchange = JsonUtils.deserialize(response, StubExchange.class);
                     addResponseInternal(exchange);
-                    FileUtils.close(is);
+                    FileUtils.close(response);
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load responses from " + filename, e);
+            throw new IllegalStateException("Failed to load stubbed exchanges from " + filename, e);
         } finally {
             FileUtils.close(reader);
             lock.writeLock().unlock();
@@ -75,10 +90,7 @@ public class StubServiceImpl implements StubService {
      * {@inheritDoc}
      */
     @Override
-    public void addStubbedExchange(StubExchange exchange) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Adding response: " + JsonUtils.prettyPrint(exchange));
-        }
+    public void addStubbedExchange(final StubExchange exchange) {
         lock.writeLock().lock();
         try {
             addResponseInternal(exchange);
@@ -233,7 +245,7 @@ public class StubServiceImpl implements StubService {
     public List<StubRequest> findRequests(StubRequest filter) {
         lock.readLock().lock();
         try {
-            RequestPattern pattern = new RequestPattern(filter);
+            RequestPattern pattern = new RequestPattern(resolver, filter);
             List<StubRequest> result = new ArrayList<StubRequest>();
             for (StubRequest request : requests) {
                 if (pattern.match(request).matches()) {
@@ -272,8 +284,17 @@ public class StubServiceImpl implements StubService {
         }
     }
 
-    private void addResponseInternal(StubExchange exchange) {
-        StubServiceExchange internal = new StubServiceExchange(exchange);
+    /**
+     * Add a stubbed exchange.
+     *
+     * @param exchange the stubbed exchange to add
+     */
+    private void addResponseInternal(final StubExchange exchange) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding stubbed exchange: " + JsonUtils.prettyPrint(exchange));
+        }
+
+        StubServiceExchange internal = new StubServiceExchange(resolver, exchange);
         // remove existing stubbed request (ie, will never match anymore)
         serviceExchanges.remove(internal);
         // ensure most recent match first
