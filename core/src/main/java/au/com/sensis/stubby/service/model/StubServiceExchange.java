@@ -29,7 +29,7 @@ public class StubServiceExchange {
      */
     private RequestPattern requestPattern;
     /**
-     * The response body for matched requests.
+     * The response body to return for matched requests.
      */
     private ResponseBody responseBody;
     /**
@@ -44,6 +44,7 @@ public class StubServiceExchange {
     /**
      * Instantiate an instance of the wrapper from a stubbed exchange.
      *
+     * @param resolver the resource resolver to use
      * @param exchange the stubbed exchange to wrap
      */
     public StubServiceExchange(final ResourceResolver resolver, final StubExchange exchange) {

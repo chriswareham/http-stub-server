@@ -9,25 +9,16 @@ import au.com.sensis.stubby.utils.JsonUtils;
 
 public class MatchField {
 
-    public enum FieldType {
-        PATH,
-        METHOD,
-        QUERY_PARAM,
-        HEADER,
-        BODY;
-    }
-
-    public enum MatchType {
-        NOT_FOUND,
-        MATCH_FAILURE,
-        MATCH;
-    }
-
     private FieldType fieldType;
+
     private String fieldName;
+
     private MatchType matchType;
+
     private Object expectedValue; // sometimes will be a Pattern, a JSON object etc.
+
     private Object actualValue; // could be string, JSON object etc.
+
     private String message;
 
     public MatchField(FieldType fieldType, String fieldName, Object expectedValue) {
@@ -88,6 +79,30 @@ public class MatchField {
         }
     }
 
+    public FieldType getFieldType() {
+        return fieldType;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public MatchType getMatchType() {
+        return matchType;
+    }
+
+    public Object getExpectedValue() {
+        return expectedValue;
+    }
+
+    public Object getActualValue() {
+        return actualValue;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     @Override
     public String toString() {
         return JsonUtils.serialize(this);
@@ -120,29 +135,5 @@ public class MatchField {
             return ((Pattern) value).pattern();
         }
         return value;
-    }
-
-    public FieldType getFieldType() {
-        return fieldType;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public MatchType getMatchType() {
-        return matchType;
-    }
-
-    public Object getExpectedValue() {
-        return expectedValue;
-    }
-
-    public Object getActualValue() {
-        return actualValue;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

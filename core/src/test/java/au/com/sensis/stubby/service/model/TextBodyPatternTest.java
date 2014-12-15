@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import au.com.sensis.stubby.model.StubMessage;
 import au.com.sensis.stubby.model.StubRequest;
-import au.com.sensis.stubby.service.model.MatchField.FieldType;
-import au.com.sensis.stubby.service.model.MatchField.MatchType;
 
 public class TextBodyPatternTest {
 
@@ -40,6 +38,7 @@ public class TextBodyPatternTest {
 
     @Test
     public void testInvalidContentType() throws Exception {
+        request.removeHeaders("Content-Type");
         request.setHeader("Content-Type", "application/json");
 
         assertRequestDoesNotMatch("foo");

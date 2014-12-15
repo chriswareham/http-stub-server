@@ -46,13 +46,13 @@ public class RequestFilterBuilder {
         Matcher matcher = PARAM_PATTERN.matcher(name);
         if (matcher.matches()) {
             String param = matcher.group(1);
-            filter.getParams().add(new StubParam(param, value));
+            filter.setParam(param, value);
             return;
         }
         matcher = HEADER_PATTERN.matcher(name);
         if (matcher.matches()) {
             String header = matcher.group(1);
-            filter.getHeaders().add(new StubParam(header, value));
+            filter.setHeader(header, value);
             return;
         }
     }

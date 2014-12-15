@@ -5,6 +5,7 @@ import au.com.sensis.stubby.utils.FileUtils;
 import au.com.sensis.stubby.utils.ResourceResolver;
 
 public class Script {
+
     private String script;
 
     public Script(final ResourceResolver resolver, final StubExchange exchange) {

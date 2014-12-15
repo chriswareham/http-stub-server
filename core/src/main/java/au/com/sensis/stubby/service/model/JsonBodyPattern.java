@@ -4,50 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import au.com.sensis.stubby.model.StubMessage;
-import au.com.sensis.stubby.service.model.MatchField.FieldType;
 import au.com.sensis.stubby.utils.HttpMessageUtils;
 import au.com.sensis.stubby.utils.JsonUtils;
 
 public class JsonBodyPattern extends BodyPattern {
 
-    public static class MatchResult { // internal match result type
-
-        private boolean match;
-        private String path;
-        private String reason;
-
-        public MatchResult(boolean match, String path, String reason) {
-            this.match = match;
-            this.path = path;
-            this.reason = reason;
-        }
-
-        public boolean isMatch() {
-            return match;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public String getReason() {
-            return reason;
-        }
-
-        public String message() {
-            return String.format("%s (at '%s')", reason, path);
-        }
-
-    }
-
     private Object pattern;
 
-    public JsonBodyPattern(Object pattern) {
+    public JsonBodyPattern(final Object pattern) {
         this.pattern = pattern;
-    }
-
-    public Object getPattern() {
-        return pattern;
     }
 
     @Override
@@ -61,6 +26,21 @@ public class JsonBodyPattern extends BodyPattern {
         } else {
             return field.asMatchFailure(actual, result.message());
         }
+    }
+
+    public Object getPattern() {
+        return pattern;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof JsonBodyPattern)
+                && ((JsonBodyPattern) obj).pattern.equals(pattern);
+    }
+
+    @Override
+    public int hashCode() {
+        return pattern.hashCode();
     }
 
     /*
@@ -194,15 +174,34 @@ public class JsonBodyPattern extends BodyPattern {
         return new MatchResult(true, null, null); // message & path ignored for success
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof JsonBodyPattern)
-                && ((JsonBodyPattern) obj).pattern.equals(pattern);
-    }
+    private static class MatchResult {
 
-    @Override
-    public int hashCode() {
-        return pattern.hashCode();
-    }
+        // internal match result type
 
+        private boolean match;
+        private String path;
+        private String reason;
+
+        public MatchResult(boolean match, String path, String reason) {
+            this.match = match;
+            this.path = path;
+            this.reason = reason;
+        }
+
+        public boolean isMatch() {
+            return match;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public String message() {
+            return String.format("%s (at '%s')", reason, path);
+        }
+    }
 }

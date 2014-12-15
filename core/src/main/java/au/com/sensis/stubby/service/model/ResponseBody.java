@@ -5,6 +5,7 @@ import au.com.sensis.stubby.utils.FileUtils;
 import au.com.sensis.stubby.utils.ResourceResolver;
 
 public class ResponseBody {
+
     private Object body;
 
     public ResponseBody(final ResourceResolver resolver, final StubResponse response) {

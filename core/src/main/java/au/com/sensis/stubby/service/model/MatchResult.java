@@ -1,44 +1,33 @@
 package au.com.sensis.stubby.service.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MatchResult implements Comparable<MatchResult> {
 
-    private List<MatchField> fields;
+    private List<MatchField> fields = new ArrayList<MatchField>();
 
-    public MatchResult() {
-        this.fields = new ArrayList<MatchField>();
-    }
+    private boolean matches = true;
 
-    public void add(MatchField field) {
+    private int score;
+
+    public void addField(final MatchField field) {
         fields.add(field);
+        matches = matches && field.getMatchType() == MatchType.MATCH;
+        score += field.score();
     }
 
     public List<MatchField> getFields() {
-        return fields;
+        return Collections.unmodifiableList(fields);
     }
 
     public boolean matches() {
-        for (MatchField field : fields) {
-            if (field.getMatchType() != MatchField.MatchType.MATCH) {
-                return false; // found a failure
-            }
-        }
-        return true; // no failures
+        return matches;
     }
 
     public int score() {
-        int result = 0;
-        for (MatchField field : fields) {
-            result += field.score();
-        }
-        return result;
-    }
-
-    @Override
-    public int compareTo(MatchResult other) {
-        return new Integer(score()).compareTo(other.score()) * -1; // highest score first
+        return score;
     }
 
     @Override
@@ -46,4 +35,9 @@ public class MatchResult implements Comparable<MatchResult> {
         return fields.toString();
     }
 
+    @Override
+    public int compareTo(final MatchResult other) {
+        // highest score first
+        return (score < other.score) ? 1 : (score > other.score) ? -1 : 0;
+    }
 }

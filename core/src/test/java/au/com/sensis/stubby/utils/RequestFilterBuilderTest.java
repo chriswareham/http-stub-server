@@ -1,11 +1,10 @@
 package au.com.sensis.stubby.utils;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +28,7 @@ public class RequestFilterBuilderTest {
 
         StubRequest filter = builder.fromParams(params).getFilter();
 
-        assertEquals("G.T", filter.getMethod());
+        Assert.assertEquals("G.T", filter.getMethod());
     }
 
     @Test
@@ -38,7 +37,7 @@ public class RequestFilterBuilderTest {
 
         StubRequest filter = builder.fromParams(params).getFilter();
 
-        assertEquals("/foo/.*", filter.getPath());
+        Assert.assertEquals("/foo/.*", filter.getPath());
     }
 
     @Test
@@ -48,7 +47,7 @@ public class RequestFilterBuilderTest {
 
         StubRequest filter = builder.fromParams(params).getFilter();
 
-        assertEquals(Arrays.asList("bar1", "bar2"), filter.getParams("foo"));
+        Assert.assertEquals(Arrays.asList("bar1", "bar2"), filter.getParams("foo"));
     }
 
     @Test
@@ -58,7 +57,6 @@ public class RequestFilterBuilderTest {
 
         StubRequest filter = builder.fromParams(params).getFilter();
 
-        assertEquals(Arrays.asList("bar1", "bar2"), filter.getHeaders("X-Foo"));
+        Assert.assertEquals(Arrays.asList("bar1", "bar2"), filter.getHeaders("X-Foo"));
     }
-
 }

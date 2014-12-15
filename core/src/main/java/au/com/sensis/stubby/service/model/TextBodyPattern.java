@@ -3,19 +3,18 @@ package au.com.sensis.stubby.service.model;
 import java.util.regex.Pattern;
 
 import au.com.sensis.stubby.model.StubMessage;
-import au.com.sensis.stubby.service.model.MatchField.FieldType;
 import au.com.sensis.stubby.utils.HttpMessageUtils;
 
 public class TextBodyPattern extends BodyPattern {
 
     private Pattern pattern;
 
-    public TextBodyPattern(String pattern) {
+    public TextBodyPattern(final String pattern) {
         this.pattern = Pattern.compile(pattern);
     }
 
     @Override
-    public MatchField matches(StubMessage request) {
+    public MatchField matches(final StubMessage request) {
         String actual = HttpMessageUtils.bodyAsText(request);
         MatchField field = new MatchField(FieldType.BODY, "body", pattern.pattern());
         if (HttpMessageUtils.isText(request)) { // require text body
@@ -29,6 +28,10 @@ public class TextBodyPattern extends BodyPattern {
         }
     }
 
+    public Pattern getPattern() {
+        return pattern;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof TextBodyPattern)
@@ -39,9 +42,4 @@ public class TextBodyPattern extends BodyPattern {
     public int hashCode() {
         return pattern.pattern().hashCode();
     }
-
-    public Pattern getPattern() {
-        return pattern;
-    }
-
 }

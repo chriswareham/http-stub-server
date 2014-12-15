@@ -60,7 +60,7 @@ public class StubServiceTest {
         service.addStubbedExchange(new StubExchange(exchange)); // create copy
 
         exchange.getResponse().setStatus(CREATED);
-        exchange.getRequest().setMethod("GE."); // make sure patterns differ (or they will overwrite eachother)
+        exchange.getRequest().setMethod("GE."); // make sure patterns differ (or they will overwrite each other)
         service.addStubbedExchange(new StubExchange(exchange));
 
         assertEquals(2, service.getResponses().size());

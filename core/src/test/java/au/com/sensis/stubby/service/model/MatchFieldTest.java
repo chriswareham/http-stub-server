@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
-import au.com.sensis.stubby.service.model.MatchField.FieldType;
+import au.com.sensis.stubby.service.model.FieldType;
 
 public class MatchFieldTest {
 

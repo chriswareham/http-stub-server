@@ -12,5 +12,4 @@ public abstract class BodyPattern { // Note: using abstract class so we can forc
 
     @Override
     public abstract int hashCode(); // force implementors to override
-
 }

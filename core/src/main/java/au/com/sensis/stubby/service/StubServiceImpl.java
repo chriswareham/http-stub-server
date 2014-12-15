@@ -100,7 +100,7 @@ public class StubServiceImpl implements StubService {
     }
 
     @Override
-    public StubServiceResult findMatch(StubRequest request) {
+    public StubServiceResult findMatch(final StubRequest request) {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Got request: " + JsonUtils.prettyPrint(request));
         }
@@ -141,7 +141,10 @@ public class StubServiceImpl implements StubService {
                 LOGGER.info("Didn't match: " + request.getPath());
             }
 
-            notifyAll(); // inform any waiting threads that a new request has come in
+            synchronized(this) {
+                // inform any waiting threads that a new request has come in
+                notifyAll();
+            }
 
             return new StubServiceResult(attempts); // no match (empty list)
         } catch (Exception e) {
@@ -224,18 +227,20 @@ public class StubServiceImpl implements StubService {
     @Override
     public List<StubRequest> findRequests(StubRequest filter, long timeout) { // blocking call
         long remaining = timeout;
-        while (remaining > 0) {
-            List<StubRequest> result = findRequests(filter);
-            if (result.isEmpty()) {
+        synchronized (this) {
+            while (remaining > 0) {
+                List<StubRequest> result = findRequests(filter);
+                if (!result.isEmpty()) {
+                    return result;
+                }
+                long start = System.currentTimeMillis();
                 try {
-                    long start = System.currentTimeMillis();
-                    wait(remaining); // wait for a request to come in, or time to expire
-                    remaining -= System.currentTimeMillis() - start;
+                    // wait for a request to come in (we'll be interrupted), or time to expire
+                    wait(remaining);
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Interrupted while waiting for request");
                 }
-            } else {
-                return result;
+                remaining -= System.currentTimeMillis() - start;
             }
         }
         return Collections.emptyList();

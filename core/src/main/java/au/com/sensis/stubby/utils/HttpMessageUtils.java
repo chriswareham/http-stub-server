@@ -79,7 +79,7 @@ public class HttpMessageUtils {
         if (body instanceof String) {
             return (String) body;
         }
-        throw new RuntimeException("Unexpected body type: " + body.getClass());
+        throw new IllegalArgumentException("Unexpected body type: " + body.getClass());
     }
 
     public static Object bodyAsJson(final StubMessage message) {
@@ -90,7 +90,7 @@ public class HttpMessageUtils {
         if (body instanceof Map || body instanceof List) {
             return body; // assume already parsed
         }
-        throw new RuntimeException("Unexpected body type: " + body.getClass());
+        throw new IllegalArgumentException("Unexpected body type: " + body.getClass());
     }
 
     private HttpMessageUtils() {

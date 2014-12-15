@@ -7,14 +7,16 @@ import au.com.sensis.stubby.model.StubResponse;
 public class StubServiceResult { // returned by the 'findMatch' method
 
     private List<MatchResult> attempts;
+
     private StubResponse response;
+
     private Long delay;
 
-    public StubServiceResult(List<MatchResult> attempts) {
-        this.attempts = attempts;
+    public StubServiceResult(final List<MatchResult> attempts) {
+        this(attempts, null, null);
     }
 
-    public StubServiceResult(List<MatchResult> attempts, StubResponse response, Long delay) {
+    public StubServiceResult(final List<MatchResult> attempts, final StubResponse response, final Long delay) {
         this.attempts = attempts;
         this.response = response;
         this.delay = delay;
@@ -40,5 +42,4 @@ public class StubServiceResult { // returned by the 'findMatch' method
     public List<MatchResult> getAttempts() {
         return attempts;
     }
-
 }

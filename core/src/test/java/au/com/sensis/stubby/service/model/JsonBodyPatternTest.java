@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import au.com.sensis.stubby.model.StubMessage;
 import au.com.sensis.stubby.model.StubRequest;
-import au.com.sensis.stubby.service.model.MatchField.FieldType;
-import au.com.sensis.stubby.service.model.MatchField.MatchType;
+import au.com.sensis.stubby.service.model.FieldType;
+import au.com.sensis.stubby.service.model.MatchType;
 import au.com.sensis.stubby.utils.JsonUtils;
 
 public class JsonBodyPatternTest {
@@ -54,6 +54,7 @@ public class JsonBodyPatternTest {
     @Test
     public void testInvalidContentType() throws Exception {
         StubMessage request = message("{}");
+        request.removeHeaders("Content-Type");
         request.setHeader("Content-Type", "text/plain");
         Assert.assertEquals(MatchType.MATCH_FAILURE, pattern("{}").matches(request).getMatchType());
     }

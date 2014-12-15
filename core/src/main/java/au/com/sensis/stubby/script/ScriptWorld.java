@@ -6,7 +6,7 @@ import au.com.sensis.stubby.model.StubResponse;
 import au.com.sensis.stubby.service.model.ResponseBody;
 
 /**
- * The world as a script sees it.
+ * The environment to execute a script with.
  */
 public class ScriptWorld {
     /**
@@ -14,15 +14,15 @@ public class ScriptWorld {
      */
     private String scriptType;
     /**
-     * The request.
+     * The stubbed request.
      */
     private StubRequest request;
     /**
-     * The response.
+     * The stubbed response.
      */
     private StubResponse response;
     /**
-     * The delay the script can introduce in handling the request.
+     * The processing delay a script can introduce (in milliseconds).
      */
     private Long delay;
 
