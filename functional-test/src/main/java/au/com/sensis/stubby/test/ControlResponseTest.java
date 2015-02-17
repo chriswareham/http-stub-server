@@ -59,7 +59,7 @@ public class ControlResponseTest extends TestBase {
         JsonExchange exchange = client.getResponse(0).exchange;
         JsonResponse response = exchange.response;
 
-        assertEquals(new Integer(201), response.status);
+        assertEquals(Integer.valueOf(201), response.status);
         assertHasHeader(response, "X-Response-Foo", "bar1");
         assertHasHeader(response, "X-Response-Foo", "bar2");
         assertEquals("response body", response.body);
@@ -71,7 +71,7 @@ public class ControlResponseTest extends TestBase {
 
         JsonExchange exchange = client.getResponse(0).exchange;
 
-        assertEquals(new Long(1234), exchange.delay);
+        assertEquals(Long.valueOf(1234L), exchange.delay);
         assertEquals("script();", exchange.script);
     }
 

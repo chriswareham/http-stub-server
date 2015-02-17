@@ -1,10 +1,10 @@
 package au.com.sensis.stubby.test.support;
 
+import java.util.concurrent.Executors;
+
 import au.com.sensis.stubby.standalone.HttpServerInstance;
 import au.com.sensis.stubby.standalone.ServerHandler;
 import au.com.sensis.stubby.standalone.ServerInstance;
-
-import java.util.concurrent.Executors;
 
 /*
  * Simple test server using standalone implementation
@@ -31,5 +31,4 @@ public class TestServer {
     public static boolean isRunning() {
         return (server != null);
     }
-
 }

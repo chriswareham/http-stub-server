@@ -1,7 +1,6 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.client.GenericClientResponse;
@@ -18,7 +17,6 @@ public class VersionTest extends TestBase {
         GenericClientResponse response = client.executeGet("/_control/version").assertOk();
         VersionResponse version = response.getJson(VersionResponse.class);
 
-        assertTrue(version.version.length() > 0);
+        Assert.assertTrue(version.version.length() > 0);
     }
-
 }
