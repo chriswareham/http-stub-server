@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import au.com.sensis.stubby.model.StubExchange;
 import au.com.sensis.stubby.model.StubRequest;
@@ -77,14 +78,17 @@ public class StubServiceExchange {
         return exchange;
     }
 
+    @JsonIgnore
     public StubResponse getResponse() {
         return exchange.getResponse();
     }
 
+    @JsonIgnore
     public ResponseBody getResponseBody() {
         return responseBody;
     }
 
+    @JsonIgnore
     public boolean isScript() {
         return script.getScript() != null;
     }

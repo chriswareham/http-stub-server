@@ -55,7 +55,7 @@ public final class JsonUtils {
         try {
             return prettyWriter().writeValueAsString(value);
         } catch (IOException e) {
-            throw new RuntimeException("Error serializing JSON", e);
+            throw new RuntimeException("Error serializing JSON: " + e.getMessage(), e);
         }
     }
 
@@ -70,7 +70,7 @@ public final class JsonUtils {
         try {
             return defaultMapper().writeValueAsString(object);
         } catch (IOException e) {
-            throw new RuntimeException("Error serializing JSON", e);
+            throw new RuntimeException("Error serializing JSON: " + e.getMessage(), e);
         }
     }
 
@@ -85,7 +85,7 @@ public final class JsonUtils {
         try {
             defaultMapper().writeValue(stream, object);
         } catch (IOException e) {
-            throw new RuntimeException("Error serializing JSON", e);
+            throw new RuntimeException("Error serializing JSON: " + e.getMessage(), e);
         }
     }
 
@@ -102,7 +102,7 @@ public final class JsonUtils {
         try {
             return defaultMapper().readValue(json, type);
         } catch (IOException e) {
-            throw new RuntimeException("Error deserializing JSON", e);
+            throw new RuntimeException("Error deserializing JSON: " + e.getMessage(), e);
         }
     }
 
@@ -119,7 +119,7 @@ public final class JsonUtils {
         try {
             return defaultMapper().readValue(stream, type);
         } catch (IOException e) {
-            throw new RuntimeException("Error deserializing JSON", e);
+            throw new RuntimeException("Error deserializing JSON: " + e.getMessage(), e);
         }
     }
 
