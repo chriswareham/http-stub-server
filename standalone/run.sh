@@ -16,7 +16,7 @@ if [ "$2" != "" ]; then
 fi
 
 SCRIPT_DIR=$(dirname $(readlink -f $0))
-JAR="$SCRIPT_DIR/target/http-stub-server-standalone-1.2-SNAPSHOT.one-jar.jar"
+JAR="$SCRIPT_DIR/target/http-stub-server-standalone-1.3.one-jar.jar"
 KEY_STORE="$SCRIPT_DIR/src/main/resources/ssl_cert.jks"
 
 java \

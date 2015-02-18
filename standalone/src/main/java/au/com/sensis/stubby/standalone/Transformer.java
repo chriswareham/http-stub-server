@@ -17,7 +17,7 @@ import au.com.sensis.stubby.model.StubResponse;
 import au.com.sensis.stubby.utils.JsonUtils;
 
 /*
- * Transform between stubby & HttpExchange structures
+ * Transform between HttpExchange and internal structures.
  */
 public class Transformer {
 
