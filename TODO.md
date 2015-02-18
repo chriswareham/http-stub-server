@@ -7,11 +7,9 @@
  * Create form in UI for creating stubbed responses
  * Acceptance tests...
  * Tool for bulk-loading messages
- * Example Ruby/Scala/other? client code for interacting with stub.
-   ** Convert Ruby example in to a GEM?
+ * Example Scala/other? client code for interacting with stub.
 
 Github TODO:
- - Add Ruby client code
  - Add some downloadable artefacts?
  - Document JavaScript support
  - Document filtering support (/_control/requests?method=GET&path=...)
