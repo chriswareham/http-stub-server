@@ -21,6 +21,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>au.com.sensis</groupId>
             <artifactId>http-stub-server-core</artifactId>
@@ -51,10 +52,13 @@
           <artifactId>junit</artifactId>
           <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
+
         <resources>
+
             <resource>
                 <targetPath>au/com/sensis/stubby/servlet</targetPath>
                 <filtering>true</filtering>
@@ -63,11 +67,15 @@
                     <include>version.properties</include>
                 </includes>
             </resource>
+
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
             </resource>
+
         </resources>
+
         <plugins>
+
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
@@ -84,6 +92,7 @@
                     </webResources>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
@@ -132,6 +141,7 @@
             </plugin>
 -->
         </plugins>
+
     </build>
 
 </project>
