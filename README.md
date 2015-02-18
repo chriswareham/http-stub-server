@@ -257,9 +257,15 @@ Field details:
 
   The type of script code to execute when this request is matched. Supports `JavaScript` (the default) and `groovy`.
 
+* `scriptFile`
+
+  Path to a file containing the script code to execute when this request is matched
+
 * `script`
 
-  Script code to execute when this request is matched. Can be used to dynamically modify the output based on input parameters, for example.
+  Script code to execute when this request is matched.
+
+Scripts can be used to dynamically modify the output based on input parameters, for example.
 
 ### Script Support
 
