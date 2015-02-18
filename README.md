@@ -232,6 +232,7 @@ This object is used by the `/_control/responses` endpoints and represents a stub
         "response": <HTTP Response>,
         "delay": <integer>,
         "scriptType": <string>
+        "scriptFile": <string>
         "script": <string>
     }
 
