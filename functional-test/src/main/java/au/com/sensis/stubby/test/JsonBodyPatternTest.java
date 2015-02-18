@@ -48,5 +48,4 @@ public class JsonBodyPatternTest extends TestBase {
 
         assertNotFound(client.executePost("/foo", "{}", ContentType.TEXT_PLAIN));
     }
-
 }

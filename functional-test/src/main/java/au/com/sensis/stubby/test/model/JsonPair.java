@@ -10,7 +10,7 @@ public class JsonPair {
 
     public JsonPair() { } // for Jackson
 
-    public JsonPair(String name, String value) {
+    public JsonPair(final String name, final String value) {
         this.name = name;
         this.value = value;
     }
@@ -21,8 +21,7 @@ public class JsonPair {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
-
 }

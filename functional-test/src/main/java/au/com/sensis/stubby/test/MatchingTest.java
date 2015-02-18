@@ -17,24 +17,28 @@ public class MatchingTest extends TestBase {
     @Test
     public void matchPattern() {
         builder().setRequestPath("/foo/.*").setResponseStatus(200).stub();
+
         assertOk(client.executeGet("/foo/bar"));
     }
 
     @Test
     public void notMatchPattern() {
         builder().setRequestPath("/foo/.*").setResponseStatus(200).stub();
+
         assertNotFound(client.executeGet("/wrong/bar"));
     }
 
     @Test
     public void matchQueryParameter() {
         builder().setRequestPath("/.*").setResponseStatus(200).addRequestParam("foo", "b..").stub();  // ensure regular expressions supported
+
         assertOk(client.executeGet("/test?foo=bar&FOO=bar")); // ensure ignores extra parameters, and case sensitive
     }
 
     @Test
     public void matchBlankQueryParameter() {
         builder().setRequestPath("/.*").setResponseStatus(200).addRequestParam("foo", ".*").stub();
+
         assertOk(client.executeGet("/test?foo=")); // should match empty parameter
         assertNotFound(client.executeGet("/test")); // should not match if parameter not given
     }
@@ -42,6 +46,7 @@ public class MatchingTest extends TestBase {
     @Test
     public void matchMissingParameter() {
         builder().setRequestPath("/.*").setResponseStatus(200).addRequestParam("foo", "b..").stub();
+
         assertNotFound(client.executeGet("/test?blah=wrong"));
     }
 
@@ -73,5 +78,4 @@ public class MatchingTest extends TestBase {
         assertOk(client.execute(new HttpPut(makeUri("/test"))));  // ensure regular expressions supported
         assertOk(client.execute(new HttpPost(makeUri("/test"))));
     }
-
 }

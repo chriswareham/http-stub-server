@@ -6,18 +6,17 @@ public class JsonRequest extends JsonMessage {
     public String path;
     public JsonPairList params;
 
-    public void setParam(String name, String value) {
+    public void setParam(final String name, final String value) {
         if (params == null) {
             params = new JsonPairList();
         }
         params.set(name, value);
     }
 
-    public void addParam(String name, String value) {
+    public void addParam(final String name, final String value) {
         if (params == null) {
             params = new JsonPairList();
         }
         params.add(name, value);
     }
-
 }

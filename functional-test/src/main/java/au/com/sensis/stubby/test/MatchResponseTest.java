@@ -1,9 +1,8 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.client.GenericClientResponse;
@@ -24,9 +23,9 @@ public class MatchResponseTest extends TestBase {
 
         GenericClientResponse response = client.executeGet("/test");
 
-        assertEquals(201, response.getStatus());
-        assertEquals(Arrays.asList("bar1", "bar2", "bar3; bar4"), response.getHeaders("X-Foo"));
-        assertEquals("response body", response.getText());
+        Assert.assertEquals(201, response.getStatus());
+        Assert.assertEquals(Arrays.asList("bar1", "bar2", "bar3; bar4"), response.getHeaders("X-Foo"));
+        Assert.assertEquals("response body", response.getText());
     }
 
     @Test
@@ -38,7 +37,6 @@ public class MatchResponseTest extends TestBase {
 
         GenericClientResponse response = client.executeGet("/test");
 
-        assertEquals(202, response.getStatus());
+        Assert.assertEquals(202, response.getStatus());
     }
-
 }

@@ -1,7 +1,6 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.client.GenericClientResponse;
@@ -21,8 +20,9 @@ public class ScriptTest extends TestBase {
         givenTestScript();
 
         GenericClientResponse result = client.executeGet("/script/bar?run=false");
-        assertEquals(201, result.getStatus());
-        assertEquals("original", result.getText());
+
+        Assert.assertEquals(201, result.getStatus());
+        Assert.assertEquals("original", result.getText());
     }
 
     @Test
@@ -30,8 +30,8 @@ public class ScriptTest extends TestBase {
         givenTestScript();
 
         GenericClientResponse result = client.executeGet("/script/bar?run=true");
-        assertEquals(202, result.getStatus());
-        assertEquals("true", result.getText());
-    }
 
+        Assert.assertEquals(202, result.getStatus());
+        Assert.assertEquals("true", result.getText());
+    }
 }

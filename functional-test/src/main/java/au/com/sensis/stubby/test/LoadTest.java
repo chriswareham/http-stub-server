@@ -1,12 +1,11 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.support.TestBase;
@@ -35,10 +34,10 @@ public class LoadTest extends TestBase {
         executor.shutdown();
         executor.awaitTermination(1, TimeUnit.MINUTES);
 
-        assertEquals(NUM_ITERATIONS, passes.get()); // ensure every task executed as passed
+        Assert.assertEquals(NUM_ITERATIONS, passes.get()); // ensure every task executed as passed
     }
 
-    public class TestAction implements Runnable {
+    private class TestAction implements Runnable {
 
         private int index;
 
@@ -60,7 +59,5 @@ public class LoadTest extends TestBase {
                 throw new RuntimeException(String.format("Expected body '%s', got '%s'", body, actual));
             }
         }
-
     }
-
 }

@@ -18,5 +18,4 @@ public class DelayTest extends TestBase {
 
         assertTimeTaken(started, ended, millis); // assert delay within tolerance
     }
-
 }

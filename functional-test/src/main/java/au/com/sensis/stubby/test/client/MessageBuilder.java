@@ -7,72 +7,72 @@ public class MessageBuilder {
     private Client client;
     private JsonExchange exchange;
 
-    public MessageBuilder(Client client) {
+    public MessageBuilder(final Client client) {
         this.client = client;
         this.exchange = new JsonExchange();
     }
 
-    public MessageBuilder setDelay(Long delay) {
+    public MessageBuilder setDelay(final Long delay) {
         exchange.delay = delay;
         return this;
     }
 
-    public MessageBuilder setScript(String script) {
+    public MessageBuilder setScript(final String script) {
         exchange.script = script;
         return this;
     }
 
-    public MessageBuilder setRequestMethod(String method) {
+    public MessageBuilder setRequestMethod(final String method) {
         exchange.request().method = method;
         return this;
     }
 
-    public MessageBuilder setRequestPath(String path) {
+    public MessageBuilder setRequestPath(final String path) {
         exchange.request().path = path;
         return this;
     }
 
-    public MessageBuilder setResponseStatus(Integer status) {
+    public MessageBuilder setResponseStatus(final Integer status) {
         exchange.response().status = status;
         return this;
     }
 
-    public MessageBuilder setResponseBody(Object body) {
+    public MessageBuilder setResponseBody(final Object body) {
         exchange.response().body = body;
         return this;
     }
 
-    public MessageBuilder setRequestBody(Object body) {
+    public MessageBuilder setRequestBody(final Object body) {
         exchange.request().body = body;
         return this;
     }
 
-    public MessageBuilder addRequestParam(String name, String value) {
+    public MessageBuilder addRequestParam(final String name, final String value) {
         exchange.request().addParam(name, value);
         return this;
     }
 
-    public MessageBuilder setRequestParam(String name, String value) {
+    public MessageBuilder setRequestParam(final String name, final String value) {
         exchange.request().setParam(name, value);
         return this;
     }
 
-    public MessageBuilder setRequestHeader(String name, String value) {
+    public MessageBuilder setRequestHeader(final String name, final String value) {
         exchange.request().setHeader(name, value);
         return this;
     }
 
-    public MessageBuilder addRequestHeader(String name, String value) {
+    public MessageBuilder addRequestHeader(final String name, final String value) {
         exchange.request().addHeader(name, value);
         return this;
     }
 
-    public MessageBuilder setResponseHeader(String name, String value) {
+    public MessageBuilder setResponseHeader(final String name, final String value) {
         exchange.response().setHeader(name, value);
         return this;
     }
 
-    public MessageBuilder addResponseHeader(String name, String value) {
+    public MessageBuilder addResponseHeader(final String name, final String value) {
         exchange.response().addHeader(name, value);
         return this;
     }
@@ -81,5 +81,4 @@ public class MessageBuilder {
         client.postMessage(exchange);
         return this;
     }
-
 }

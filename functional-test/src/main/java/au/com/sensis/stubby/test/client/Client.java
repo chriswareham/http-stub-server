@@ -15,11 +15,11 @@ public class Client extends GenericClient {
         super(baseUri);
     }
 
-    public void postMessage(JsonExchange message) {
+    public void postMessage(final JsonExchange message) {
         executePost("/_control/responses", JsonUtils.serialize(message), ContentType.APPLICATION_JSON).assertOk();
     }
 
-    public void postMessage(String message) {
+    public void postMessage(final String message) {
         executePost("/_control/responses", message, ContentType.APPLICATION_JSON).assertOk();
     }
 
@@ -31,15 +31,15 @@ public class Client extends GenericClient {
         return executeGet("/_control/requests").assertOk().getJson(JsonRequestList.class);
     }
 
-    public JsonRequestList findRequests(String query) {
+    public JsonRequestList findRequests(final String query) {
         return executeGet("/_control/requests?" + query).assertOk().getJson(JsonRequestList.class);
     }
 
-    public JsonStubbedExchange getResponse(int index) {
+    public JsonStubbedExchange getResponse(final int index) {
         return executeGet("/_control/responses/" + index).assertOk().getJson(JsonStubbedExchange.class);
     }
 
-    public JsonRequest getRequest(int index) {
+    public JsonRequest getRequest(final int index) {
         return executeGet("/_control/requests/" + index).assertOk().getJson(JsonRequest.class);
     }
 
@@ -55,5 +55,4 @@ public class Client extends GenericClient {
         deleteResponses();
         deleteRequests();
     }
-
 }

@@ -1,7 +1,6 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.client.MessageBuilder;
@@ -20,8 +19,8 @@ public class DuplicateRequestPatternTest extends TestBase {
             message.setResponseStatus(status).stub();
 
             JsonStubbedExchangeList responses = responses();
-            assertEquals(1, responses.size());
-            assertEquals(status, (int)responses.get(0).exchange.response.status);
+            Assert.assertEquals(1, responses.size());
+            Assert.assertEquals(status, (int) responses.get(0).exchange.response.status);
 
             status++;
         }
@@ -33,8 +32,8 @@ public class DuplicateRequestPatternTest extends TestBase {
             message.setResponseStatus(status).stub();
 
             JsonStubbedExchangeList responses = responses();
-            assertEquals(status, responses.size()); // size should grow
-            assertEquals(status, (int)responses.get(0).exchange.response.status);
+            Assert.assertEquals(status, responses.size()); // size should grow
+            Assert.assertEquals(status, (int) responses.get(0).exchange.response.status);
 
             status++;
         }
@@ -67,5 +66,4 @@ public class DuplicateRequestPatternTest extends TestBase {
                 builder().setRequestPath("/foo").addRequestParam("foo", "bar1"),
                 builder().setRequestPath("/foo").addRequestParam("foo", "bar2"));
     }
-
 }

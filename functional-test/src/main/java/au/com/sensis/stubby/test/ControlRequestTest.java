@@ -1,11 +1,9 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.model.JsonPair;
@@ -20,8 +18,8 @@ public class ControlRequestTest extends TestBase {
         client.executeGet("/test/1");
         client.executeGet("/test/2");
 
-        assertEquals("/test/2", client.getRequest(0).path);
-        assertEquals("/test/1", client.getRequest(1).path);
+        Assert.assertEquals("/test/2", client.getRequest(0).path);
+        Assert.assertEquals("/test/1", client.getRequest(1).path);
     }
 
     @Test
@@ -31,26 +29,26 @@ public class ControlRequestTest extends TestBase {
 
         JsonRequestList requests = client.getRequests();
 
-        assertEquals(2, requests.size());
-        assertEquals("/test/2", requests.get(0).path);
-        assertEquals("/test/1", requests.get(1).path);
+        Assert.assertEquals(2, requests.size());
+        Assert.assertEquals("/test/2", requests.get(0).path);
+        Assert.assertEquals("/test/1", requests.get(1).path);
     }
 
     @Test
     public void testGetRequestNotFound() {
         client.executeGet("/test/1");
 
-        assertEquals(200, client.executeGet("/_control/requests/0").getStatus());
-        assertEquals(404, client.executeGet("/_control/requests/1").getStatus());
+        Assert.assertEquals(200, client.executeGet("/_control/requests/0").getStatus());
+        Assert.assertEquals(404, client.executeGet("/_control/requests/1").getStatus());
     }
 
     @Test
     public void testDeleteRequests() {
         client.executeGet("/test/1");
-        assertEquals(1, client.getRequests().size());
+        Assert.assertEquals(1, client.getRequests().size());
 
         client.deleteRequests();
-        assertEquals(0, client.getRequests().size());
+        Assert.assertEquals(0, client.getRequests().size());
     }
 
     @Test
@@ -63,17 +61,16 @@ public class ControlRequestTest extends TestBase {
 
         JsonRequest request = client.getRequest(0);
 
-        assertEquals("POST", request.method);
-        assertEquals("/test/path", request.path);
+        Assert.assertEquals("POST", request.method);
+        Assert.assertEquals("/test/path", request.path);
 
-        assertEquals(2, request.params.size());
-        assertTrue(request.params.contains(new JsonPair("foo", "bar1")));
-        assertTrue(request.params.contains(new JsonPair("foo", "bar2")));
+        Assert.assertEquals(2, request.params.size());
+        Assert.assertTrue(request.params.contains(new JsonPair("foo", "bar1")));
+        Assert.assertTrue(request.params.contains(new JsonPair("foo", "bar2")));
 
         assertHasHeader(request, "X-Foo", "bar1");
         assertHasHeader(request, "X-Foo", "bar2");
 
-        assertEquals("Testing content", request.body);
+        Assert.assertEquals("Testing content", request.body);
     }
-
 }

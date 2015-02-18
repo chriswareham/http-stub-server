@@ -1,8 +1,6 @@
 package au.com.sensis.stubby.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.sensis.stubby.test.client.MessageBuilder;
@@ -43,13 +41,13 @@ public class ControlResponseTest extends TestBase {
         JsonExchange exchange = client.getResponse(0).exchange;
         JsonRequest pattern = exchange.request;
 
-        assertEquals("PUT", pattern.method);
-        assertEquals("/test/2", pattern.path);
-        assertTrue(pattern.params.contains(new JsonPair("foo", "bar1")));
-        assertTrue(pattern.params.contains(new JsonPair("foo", "bar2")));
+        Assert.assertEquals("PUT", pattern.method);
+        Assert.assertEquals("/test/2", pattern.path);
+        Assert.assertTrue(pattern.params.contains(new JsonPair("foo", "bar1")));
+        Assert.assertTrue(pattern.params.contains(new JsonPair("foo", "bar2")));
         assertHasHeader(pattern, "X-Request-Foo", "bar1");
         assertHasHeader(pattern, "X-Request-Foo", "bar2");
-        assertEquals("request body", pattern.body);
+        Assert.assertEquals("request body", pattern.body);
     }
 
     @Test
@@ -59,10 +57,10 @@ public class ControlResponseTest extends TestBase {
         JsonExchange exchange = client.getResponse(0).exchange;
         JsonResponse response = exchange.response;
 
-        assertEquals(Integer.valueOf(201), response.status);
+        Assert.assertEquals(Integer.valueOf(201), response.status);
         assertHasHeader(response, "X-Response-Foo", "bar1");
         assertHasHeader(response, "X-Response-Foo", "bar2");
-        assertEquals("response body", response.body);
+        Assert.assertEquals("response body", response.body);
     }
 
     @Test
@@ -71,8 +69,8 @@ public class ControlResponseTest extends TestBase {
 
         JsonExchange exchange = client.getResponse(0).exchange;
 
-        assertEquals(Long.valueOf(1234L), exchange.delay);
-        assertEquals("script();", exchange.script);
+        Assert.assertEquals(Long.valueOf(1234L), exchange.delay);
+        Assert.assertEquals("script();", exchange.script);
     }
 
     @Test
@@ -80,8 +78,8 @@ public class ControlResponseTest extends TestBase {
         builder1().stub();
         builder2().stub();
 
-        assertEquals("/test/2", client.getResponse(0).exchange.request.path);
-        assertEquals("/test/1", client.getResponse(1).exchange.request.path);
+        Assert.assertEquals("/test/2", client.getResponse(0).exchange.request.path);
+        Assert.assertEquals("/test/1", client.getResponse(1).exchange.request.path);
     }
 
     @Test
@@ -91,26 +89,26 @@ public class ControlResponseTest extends TestBase {
 
         JsonStubbedExchangeList responses = client.getResponses();
 
-        assertEquals(2, responses.size());
-        assertEquals("/test/2", responses.get(0).exchange.request.path);
-        assertEquals("/test/1", responses.get(1).exchange.request.path);
+        Assert.assertEquals(2, responses.size());
+        Assert.assertEquals("/test/2", responses.get(0).exchange.request.path);
+        Assert.assertEquals("/test/1", responses.get(1).exchange.request.path);
     }
 
     @Test
     public void testGetResponseNotFound() {
         builder1().stub();
 
-        assertEquals(200, client.executeGet("/_control/responses/0").getStatus());
-        assertEquals(404, client.executeGet("/_control/responses/1").getStatus());
+        Assert.assertEquals(200, client.executeGet("/_control/responses/0").getStatus());
+        Assert.assertEquals(404, client.executeGet("/_control/responses/1").getStatus());
     }
 
     @Test
     public void testDeleteResponses() {
         builder1().stub();
-        assertEquals(1, client.getResponses().size());
+        Assert.assertEquals(1, client.getResponses().size());
 
         client.deleteResponses();
-        assertEquals(0, client.getResponses().size());
+        Assert.assertEquals(0, client.getResponses().size());
     }
 
     /*
@@ -119,21 +117,21 @@ public class ControlResponseTest extends TestBase {
         builder1().stub();
         builder2().stub();
 
-        assertEquals("/test/2", client.getResponse(0).exchange.request.path);
+        Assert.assertEquals("/test/2", client.getResponse(0).exchange.request.path);
 
         client.deleteResponse(0);
-        assertEquals("/test/1", client.getResponse(1).exchange.request.path);
+        Assert.assertEquals("/test/1", client.getResponse(1).exchange.request.path);
 
         client.deleteResponse(0);
-        assertEquals(0, client.getResponses().size());
+        Assert.assertEquals(0, client.getResponses().size());
     }
 
     @Test
     public void testDeleteNotFound() {
         builder1().stub();
 
-        assertEquals(404, client.executeDelete("/_control/responses/1").getStatus());
-        assertEquals(200, client.executeDelete("/_control/responses/0").getStatus());
+        Assert.assertEquals(404, client.executeDelete("/_control/responses/1").getStatus());
+        Assert.assertEquals(200, client.executeDelete("/_control/responses/0").getStatus());
     }
     */
 }

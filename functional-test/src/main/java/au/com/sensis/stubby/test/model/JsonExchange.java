@@ -24,5 +24,4 @@ public class JsonExchange {
         }
         return response;
     }
-
 }
